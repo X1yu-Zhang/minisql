@@ -1,4 +1,4 @@
-#include "./buffer/buffermanager.h"
+#include "buffermanager.h"
 #include <iostream>
 int main(){
     buffermanager bm;
