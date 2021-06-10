@@ -1,16 +1,24 @@
 #include "buffermanager.h"
-File * buffermanager :: GetFile( string table_name, int type,bool pin ){
-    File * ret;
+File * buffermanager :: GetFile( string table_name, int type ){
+    File * ret = NULL;
+    File * tail = NULL;
     if( FileHead != NULL ){
         for ( File * tmp = FileHead; tmp ; tmp = tmp->next ){
+            if( tmp->next == NULL )tail = tmp;
             if( tmp->filename == table_name && tmp->type == type ){
                 ret = tmp;
                 break;
             }
         }
-    }else{
-        FileHead = new File(table_name,type);
-        ret = FileHead;
+    }
+    if( !ret ){
+        if( FileHead == NULL )
+            FileHead = ret = new File(table_name, type);
+        else{
+            ret = new File(table_name , type);
+            ret->pre = tail;
+            tail->next = ret;
+        }
     }
     return ret;
 }
@@ -130,9 +138,4 @@ Block * buffermanager :: GetEmptyBlock(){
         ret = tmp;
     }
     return ret;
-}
-void buffermanager :: CloseFile( File * file ){
-    if( !file->pin ){
-        
-    }
 }

@@ -5,4 +5,6 @@ int main(){
     bm.GetFile("data.txt",0);
     Block * tmp = bm.GetBlock(bm.FileHead,NULL);
     bm.ShowInfo(tmp);
+    tmp = bm.GetBlock(bm.FileHead,tmp);
+    bm.ShowInfo(tmp);
 }

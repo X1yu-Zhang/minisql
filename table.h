@@ -5,9 +5,8 @@
 #include <string>
 #include <vector>
 using namespace std;
-class table{
+class table: public File{
 private:
-    string table_name;
     vector<attribute> attribute_list;
     int record_size;
 public:

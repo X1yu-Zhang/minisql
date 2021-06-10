@@ -35,21 +35,22 @@ void Block :: SetClock(){
 void Block :: ReadIn(){
     string filename = this->filename;
     string filetype = ( this->file->type?"index" : "record");
-    string fpath = "./"+filetype+"/"+filename;
+    string fpath = "./data/"+filetype+"/"+filename;
 	fstream file(fpath, ios::in | ios::out);
-    int offset = this->offsetNum * BLOCK_SIZE;		
+    int offset = this->offsetNum * BLOCK_SIZE;	
+    cout << file.is_open() << endl;
 	file.seekp(offset, ios::beg);		
-    if( this->data != NULL ) delete this->data;			
-	this->data = new char[BLOCK_SIZE]();	
-    string temp = data;
-    this->UsingSize = temp.length();	
-	file.read(this->data, BLOCK_SIZE);		
+    if( this->data == NULL )		
+	    this->data = new char[BLOCK_SIZE + 1]();
+	file.read( this->data, BLOCK_SIZE );	
+    string tmp = this->data;
+    this->SetUsingSize( tmp.size() );	
 	file.close();
 }
 void Block :: WriteBack(){
     string filename = this->filename;
     string filetype = ( this->file->type?"record":"index" );
-    string fpath = "../"+filetype+"/"+filename;
+    string fpath = "./data/"+filetype+"/"+filename;
 	fstream file(fpath, ios::in | ios::out);
     int offset = this->offsetNum * BLOCK_SIZE;		
 	file.seekp(offset, ios::beg);			
@@ -63,4 +64,9 @@ void Block :: SetUsingSize( int size ){
 void Block :: write(int offset, const char * data,int length){
     memcpy(this->data+offset , data , length);
     SetDirty();
+}
+char * Block :: FetchRecord( int offset , int size ){
+    char * ret = new char[size];
+    memcpy(ret , data + offset , size);
+    return ret;
 }

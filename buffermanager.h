@@ -14,7 +14,7 @@ public:
     File * FileHead;
     buffermanager():FileHead(NULL),total_block(0){};
     ~buffermanager();
-    File * GetFile( string table_name, int type, bool pin = false );
+    File * GetFile( string table_name, int type );
     Block * GetBlock( File * file, Block * position );
     Block * GetNextBlock( File * file , Block * position);
     Block * GetBlockByNum( File * file , int offsetNum );
