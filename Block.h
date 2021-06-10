@@ -34,6 +34,7 @@ public:
     void SetClock();
     void WriteBack();
     void ReadIn();
+    void write(int offset, const char * data,int length);
     void SetUsingSize(int size);
 };
 #endif

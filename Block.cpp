@@ -60,3 +60,7 @@ void Block :: WriteBack(){
 void Block :: SetUsingSize( int size ){
     UsingSize = size;
 }
+void Block :: write(int offset, const char * data,int length){
+    memcpy(this->data+offset , data , length);
+    SetDirty();
+}
