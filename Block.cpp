@@ -36,16 +36,15 @@ void Block :: ReadIn(){
     string filename = this->filename;
     string filetype = ( this->file->type?"index" : "record");
     string fpath = "./data/"+filetype+"/"+filename;
-	fstream file(fpath, ios::in | ios::out);
+    cout << fpath << endl;
+	fstream file(fpath, ios::in | ios::out | ios :: binary);
     int offset = this->offsetNum * BLOCK_SIZE;	
-    cout << file.is_open() << endl;
 	file.seekp(offset, ios::beg);		
     if( this->data == NULL )		
 	    this->data = new char[BLOCK_SIZE + 1]();
-	file.read( this->data, BLOCK_SIZE );	
-    string tmp = this->data;
-    this->SetUsingSize( tmp.size() );	
-	file.close();
+    cout << file.is_open() << endl;
+	file.read( this->data, BLOCK_SIZE );
+    file.close();
 }
 void Block :: WriteBack(){
     string filename = this->filename;
@@ -65,8 +64,9 @@ void Block :: write(int offset, const char * data,int length){
     memcpy(this->data+offset , data , length);
     SetDirty();
 }
-char * Block :: FetchRecord( int offset , int size ){
+char * Block :: FetchRecord( int index , int size ){
     char * ret = new char[size];
+    int offset = index * size;
     memcpy(ret , data + offset , size);
     return ret;
 }

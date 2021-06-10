@@ -1,7 +1,7 @@
 #ifndef _BLOCK_H_
 #define _BLOCK_H_
 
-#define BLOCK_SIZE 2
+#define BLOCK_SIZE 4096
 #define BLOCK_NUMBER 100
 #include <iostream>
 #include <ctime>
@@ -26,6 +26,7 @@ private:
     Block * next;
     Block * pre;
     char *data;
+    friend File;
 public:
     Block();
     ~Block();
