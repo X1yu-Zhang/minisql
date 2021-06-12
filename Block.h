@@ -43,5 +43,6 @@ public:
     void write(int offset, const char * data,int length);
     void SetUsingSize(int size);
     char * FetchRecord( int offset , int size );
+    char * GetContent();
 };
 #endif

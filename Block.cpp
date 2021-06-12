@@ -70,3 +70,6 @@ char * Block :: FetchRecord( int index , int size ){
     memcpy(ret , data + offset , size);
     return ret;
 }
+char * Block :: GetContent(){
+    return this->data;
+}
