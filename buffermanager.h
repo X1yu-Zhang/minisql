@@ -21,6 +21,7 @@ public:
     Block * GetEmptyBlock();
     Block * GetReplaceBlock();
     Block * GetBlockHead( File * file );
+    void DeleteFile( string filename );
     void CloseFile( File * file );
     void ShowInfo(Block * tmp);
     void WriteBackAll();

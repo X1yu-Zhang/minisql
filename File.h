@@ -14,6 +14,5 @@ public:
     File * pre;
     File(string _filename,int _type):filename(_filename),type(_type)\
     ,pin(false),head(NULL),next(NULL),pre(NULL){};
-    ~File();
 };
 #endif

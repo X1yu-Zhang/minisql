@@ -1,21 +1,19 @@
 #include "Block.h"
 Block :: Block():filename(""),file(NULL),dirty(false),\
 pin(false),end(false),offsetNum(-1),UsingSize(0),\
-time(clock()),next(NULL),pre(NULL),data(NULL){};
+time(clock()),next(NULL),pre(NULL),data(new char[BLOCK_SIZE]()){};
 Block :: ~Block(){
     delete data;
 }
-void Block :: init(){
-    filename = "";
-    file = NULL;
-    dirty = false;
-    pin = false;
-    end = false;
-    offsetNum = -1;
-    clock_t time = clock();
-    next = pre = 0;
-    if( data != NULL ) delete data;
-    data = NULL;
+void Block :: clear(){
+	memset(data, 0, BLOCK_SIZE);
+	dirty = false;
+	file = NULL;
+	next = NULL;
+	offsetNum = -1;
+	pre = NULL;
+	time = 0;
+	UsingSize = 0;
 }
 void Block :: SetPin(){
     pin = true;
@@ -44,6 +42,8 @@ void Block :: ReadIn(){
 	    this->data = new char[BLOCK_SIZE + 1]();
     cout << file.is_open() << endl;
 	file.read( this->data, BLOCK_SIZE );
+    UsingSize = file.gcount();
+    cout << UsingSize;
     file.close();
 }
 void Block :: WriteBack(){

@@ -3,6 +3,7 @@
 
 #define BLOCK_SIZE 4096
 #define BLOCK_NUMBER 100
+#include <cstring>
 #include <iostream>
 #include <ctime>
 #include <fstream>
@@ -30,7 +31,7 @@ private:
 public:
     Block();
     ~Block();
-    void init();
+    void clear();
     friend class buffermanager;
     void SetPin();
     void ClearPin();

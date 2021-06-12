@@ -63,6 +63,7 @@ Block * buffermanager :: GetBlock( File * file, Block * position ){
         file->head = ret;
     }
     ret->SetClock();
+    if( ret->data == NULL ) ret->data = new char[BLOCK_SIZE]();
     ret->file = file;
     ret->filename = filename;
     ret->ReadIn();
@@ -74,7 +75,7 @@ void buffermanager :: WriteBackAll(){
         for(Block * btmp = tmp->head; btmp ; btmp = next){
             next = btmp->next;
             btmp->WriteBack();
-            btmp->init();
+            btmp->clear();
         }
     }
 }
@@ -134,8 +135,44 @@ Block * buffermanager :: GetEmptyBlock(){
         if( tmp->pre ) tmp->pre->next = tmp->next;
         if( FileHead->head == tmp ) FileHead->head = tmp->next;
         tmp->WriteBack();
-        tmp->init();
+        tmp->clear();
         ret = tmp;
     }
     return ret;
+}
+void buffermanager :: CloseFile( File * file ){
+	Block *tmp = file->head;
+	while (tmp->next)
+	{
+		if (tmp->pre)
+		{
+			tmp->clear();
+            total_block--;
+		}
+		tmp = tmp->next;
+	}
+	tmp->clear();
+	total_block--;
+	file->head = NULL;
+	file->filename = "";
+	file->next = NULL;
+	file->pre = NULL;
+	delete file;
+}
+void buffermanager :: DeleteFile( string  filename ){
+    if( FileHead == NULL )return ;
+    for ( File * tmp = FileHead; tmp ; tmp = tmp->next ){
+        if( tmp->filename == filename ){
+            if( tmp->next ){
+                tmp->next->pre = tmp->pre;
+            }
+            if( tmp->pre ){
+                tmp->pre->next = tmp->next;
+            }else{
+                FileHead = tmp->next;
+            }
+            CloseFile(tmp);
+            return ;
+        }
+    }
 }
