@@ -39,7 +39,7 @@ void Block :: ReadIn(){
     int offset = this->offsetNum * BLOCK_SIZE;	
 	file.seekp(offset, ios::beg);		
     if( this->data == NULL )		
-	    this->data = new char[BLOCK_SIZE + 1]();
+	    this->data = new char[BLOCK_SIZE]();
     cout << file.is_open() << endl;
 	file.read( this->data, BLOCK_SIZE );
     UsingSize = file.gcount();

@@ -159,7 +159,7 @@ void buffermanager :: CloseFile( File * file ){
 	file->pre = NULL;
 	delete file;
 }
-void buffermanager :: DeleteFile( string  filename ){
+void buffermanager :: DeleteFileFromList( string  filename ){
     if( FileHead == NULL )return ;
     for ( File * tmp = FileHead; tmp ; tmp = tmp->next ){
         if( tmp->filename == filename ){
