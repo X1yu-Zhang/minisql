@@ -2,8 +2,8 @@
 #define _BUFFERMANAGER_H_
 #include <string>
 #include <iostream>
-#include "File.h"
-#include "Block.h"
+#include "./File.h"
+#include "./Block.h"
 using namespace std;
 class buffermanager
 {

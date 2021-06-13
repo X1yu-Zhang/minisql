@@ -11,7 +11,6 @@
 #include <string>
 using namespace std;
 #include "File.h"
-#include "attribute.h"
 class File;
 class Block
 {
