@@ -1,6 +1,6 @@
 #include "Block.h"
 Block :: Block():filename(""),file(NULL),dirty(false),\
-pin(false),end(false),offsetNum(-1),UsingSize(0),\
+pin(false),offsetNum(-1),UsingSize(0),\
 time(clock()),next(NULL),pre(NULL),data(new char[BLOCK_SIZE]()){};
 Block :: ~Block(){
     delete data;
@@ -34,16 +34,13 @@ void Block :: ReadIn(){
     string filename = this->filename;
     string filetype = ( this->file->type?"index" : "record");
     string fpath = "./data/"+filetype+"/"+filename;
-    cout << fpath << endl;
 	fstream file(fpath, ios::in | ios::out | ios :: binary);
     int offset = this->offsetNum * BLOCK_SIZE;	
 	file.seekp(offset, ios::beg);		
     if( this->data == NULL )		
 	    this->data = new char[BLOCK_SIZE]();
-    cout << file.is_open() << endl;
 	file.read( this->data, BLOCK_SIZE );
     UsingSize = file.gcount();
-    cout << UsingSize;
     file.close();
 }
 void Block :: WriteBack(){

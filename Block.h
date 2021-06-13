@@ -19,7 +19,6 @@ private:
     File * file;
     bool dirty;
     bool pin;
-    bool end;
     int offsetNum;
     int UsingSize;
     clock_t time;

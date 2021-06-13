@@ -95,7 +95,6 @@ Block * buffermanager :: GetNextBlock( File * file, Block * position ){
             ret = GetBlock(file,position);
         }
     }else{
-        if( position->end ) position->end = false;
         ret = GetBlock( file , position );
     }
     return ret;
