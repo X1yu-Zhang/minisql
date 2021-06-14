@@ -3,7 +3,7 @@ Block :: Block():filename(""),file(NULL),dirty(false),\
 pin(false),offsetNum(-1),UsingSize(0),\
 time(0),next(NULL),pre(NULL),data(new char[BLOCK_SIZE]()){};
 Block :: ~Block(){
-    if ( this->dirty ) WriteBack();
+    if ( this->dirty && this->offsetNum != -1 ) WriteBack();
     delete data;
 }
 void Block :: clear(){
