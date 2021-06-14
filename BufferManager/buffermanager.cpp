@@ -112,9 +112,22 @@ Block * buffermanager :: GetBlockByNum( File * file , int offsetNum ){
     }
     return ret;
 }
+void converse( char t ){
+    if( t > 9) t += 'A' - 10;
+    else t += '0';
+    cout << t;
+}
 void buffermanager :: ShowInfo(Block * tmp){
     for(Block * btmp = tmp ; btmp ; btmp = btmp -> next){
-        cout << btmp->data << endl;
+        cout << btmp->offsetNum << endl;
+        cout << btmp->UsingSize << endl;
+        for(int i = 0;i < btmp->UsingSize + 4 ; i++ ){
+            unsigned char t = btmp->data[i];
+            converse(t/16);
+            converse(t%16);
+            cout << " " ;
+        }
+        cout << endl;
     }
 }
 Block * buffermanager :: GetEmptyBlock(){

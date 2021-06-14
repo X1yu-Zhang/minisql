@@ -2,12 +2,12 @@
 #include <fstream>
 using namespace std;
 int main(){
-    fstream file("../data/record/data2.txt" , ios::in | ios :: out | ios :: binary);
+    fstream file("../data/record/all_int.db" , ios::in | ios :: out | ios :: binary);
     cout << file.is_open() << endl;
     char temp[5];
-    for(int i = 0 ; i < 10 ; i ++ ){
+    for(int i = 0 ; i < 12 ; i ++ ){
         file.read(temp , 4);
-        cout << *(int *)temp <<endl;
+        cout << *(int *)temp << " " ;
     }
 }
 /*

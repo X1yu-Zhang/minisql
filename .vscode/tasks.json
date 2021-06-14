@@ -10,7 +10,6 @@
                 "buffermanager.cpp",
                 "Block.h",
                 "Block.cpp",
-                "File.cpp",
                 "File.h",
                 "${file}",
                 "-o",

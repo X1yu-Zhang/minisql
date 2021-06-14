@@ -3,6 +3,7 @@ Block :: Block():filename(""),file(NULL),dirty(false),\
 pin(false),offsetNum(-1),UsingSize(0),\
 time(clock()),next(NULL),pre(NULL),data(new char[BLOCK_SIZE]()){};
 Block :: ~Block(){
+    if ( this->dirty ) WriteBack();
     delete data;
 }
 void Block :: clear(){
@@ -33,7 +34,7 @@ void Block :: SetClock(){
 void Block :: ReadIn(){
     string filename = this->filename;
     string filetype = ( this->file->type?"index" : "record");
-    string fpath = "./data/"+filetype+"/"+filename;
+    string fpath = "../data/"+filetype+"/"+filename+".db";
 	fstream file(fpath, ios::in | ios::out | ios :: binary);
     int offset = this->offsetNum * BLOCK_SIZE;	
 	file.seekp(offset, ios::beg);		
@@ -45,20 +46,21 @@ void Block :: ReadIn(){
 }
 void Block :: WriteBack(){
     string filename = this->filename;
-    string filetype = ( this->file->type?"record":"index" );
-    string fpath = "./data/"+filetype+"/"+filename;
-	fstream file(fpath, ios::in | ios::out);
+    string filetype = ( this->file->type?"index" : "record" );
+    string fpath = "../data/"+filetype+"/"+filename+".db";
+	fstream file(fpath, ios::in | ios::out | ios :: binary);
     int offset = this->offsetNum * BLOCK_SIZE;		
-	file.seekp(offset, ios::beg);			
-    string temp = this->data;
+	file.seekp(offset, ios::beg);	
 	file.write( this->data, this->UsingSize );
 	file.close();
 }
 void Block :: SetUsingSize( int size ){
-    UsingSize = size;
+    UsingSize += size;
 }
-void Block :: write(int offset, const char * data,int length){
-    memcpy(this->data+offset , data , length);
+void Block :: write(int offset, const char * data, int length){
+    for(int i = 0; i < length ;i ++ ){
+        this->data[offset + i] = data[i];
+    }
     SetDirty();
 }
 char * Block :: FetchRecord( int index , int size ){

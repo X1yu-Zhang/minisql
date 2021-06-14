@@ -2,13 +2,13 @@
 #include <iostream>
 int main(){
     buffermanager bm;
-    bm.GetFile("data2.txt",0);
+    bm.GetFile("all_int",0);
     Block * tmp = bm.GetBlock(bm.FileHead,NULL);
-    int t = 11;
-    char * temp = (char*)&t;
-    tmp->write(40, temp , 4);
+    cout << endl;
+    bm.ShowInfo(tmp);
+    tmp = bm.GetNextBlock(bm.FileHead,tmp);
     bm.ShowInfo(tmp);
 }
 /*
-10 : 0A00 0000 "0A 00 00 00" 0A 00 00 00
+10 : A0 00 00 00  
 */
