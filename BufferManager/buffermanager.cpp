@@ -31,7 +31,7 @@ buffermanager :: ~buffermanager(){
 }
 
 Block * buffermanager :: GetReplaceBlock(){
-    clock_t max_clock = clock();
+    clock_t max_clock = clock()*1.0 / 1000;
     Block * ret = NULL;
     for(int i = 0 ; i < BLOCK_NUMBER ; i++ ){
         if( block_pool[i].time < max_clock && !block_pool[i].pin && block_pool[i].offsetNum != -1 ){

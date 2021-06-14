@@ -1,7 +1,7 @@
 #include "Block.h"
 Block :: Block():filename(""),file(NULL),dirty(false),\
 pin(false),offsetNum(-1),UsingSize(0),\
-time(clock()),next(NULL),pre(NULL),data(new char[BLOCK_SIZE]()){};
+time(0),next(NULL),pre(NULL),data(new char[BLOCK_SIZE]()){};
 Block :: ~Block(){
     if ( this->dirty ) WriteBack();
     delete data;
@@ -29,7 +29,7 @@ void Block :: ClearDirty(){
     dirty = false;
 }
 void Block :: SetClock(){
-    time = clock();
+    time = clock()*1.0 / 1000 ;
 }
 void Block :: ReadIn(){
     string filename = this->filename;

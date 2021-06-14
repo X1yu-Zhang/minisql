@@ -21,7 +21,7 @@ private:
     bool pin;
     int offsetNum;
     int UsingSize;
-    clock_t time;
+    double time;
     Block * next;
     Block * pre;
     char *data;
