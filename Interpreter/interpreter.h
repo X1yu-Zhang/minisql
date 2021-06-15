@@ -7,13 +7,16 @@
 #include <vector>
 #include "../API/API.h"
 #include "../exception.h"
+#include "../RecordManager/RecordManager.h"
+#include "../IndexManager/IndexManager.h"
+#include "../CatalogManager/CatalogManager.h"
 using namespace std;
 #include <sstream>std::stringstream ss;
 
 using namespace std;
 class Interpreter {
 public:
-	Interpreter();
+	Interpreter(CatalogManager & CM ,RecordManager & RM, IndexManager & IM ,API & A):CM(CM),RM(RM),IM(IM),_API(A){}
 	void getQuery();
 	void EXEC();
 	void Normalize();
@@ -37,7 +40,10 @@ private:
 	string getRelation(int pos, int& end_pos);//�����߼���ϵ
 	string getWord(int pos, int& end_pos);//���ص���
 	string getLower(string s, int p);//��Сд������ʶ��
-
+	CatalogManager & CM;
+	RecordManager & RM;
+	IndexManager & IM;
+	API & _API;
 };
 
 string trim(string s);

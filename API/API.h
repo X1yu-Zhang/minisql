@@ -15,19 +15,19 @@ public:
 	bool createIndex(string table_name, string index_name, string attr_name);
 	bool dropIndex(string table_name, string index_name);
 private:
-	//用于多条件查询时的and条件合并
+	//锟斤拷锟节讹拷锟斤拷锟斤拷锟斤拷询时锟斤拷and锟斤拷锟斤拷锟较诧拷
 	Table unionTable(Table& table1, Table& table2, string target_attr, Where where);
-	//用于多条件查询时的or条件合并
+	//锟斤拷锟节讹拷锟斤拷锟斤拷锟斤拷询时锟斤拷or锟斤拷锟斤拷锟较诧拷
 	Table joinTable(Table& table1, Table& table2, string target_attr, Where where);
 
 private:
-	RecordManager record;
-	CatalogManager catalog;
+	RecordManager & record;
+	CatalogManager & catalog;
 };
 
-//用于对vector的sort时排序
+//锟斤拷锟节讹拷vector锟斤拷sort时锟斤拷锟斤拷
 bool sortcmp(const Tuple& tuple1, const Tuple& tuple2);
-//用于对vector对合并时对排序
+//锟斤拷锟节讹拷vector锟皆合诧拷时锟斤拷锟斤拷锟斤拷
 bool calcmp(const Tuple& tuple1, const Tuple& tuple2);
 bool isSatisfied(Tuple& tuple, int target_attr, Where where);
 

@@ -74,7 +74,8 @@ void buffermanager :: WriteBackAll(){
         Block * next;
         for(Block * btmp = tmp->head; btmp ; btmp = next){
             next = btmp->next;
-            btmp->WriteBack();
+            if( next->dirty )
+                btmp->WriteBack();
             btmp->clear();
         }
     }
@@ -146,7 +147,8 @@ Block * buffermanager :: GetEmptyBlock(){
         if( tmp->next ) tmp->next->pre = tmp->pre;
         if( tmp->pre ) tmp->pre->next = tmp->next;
         if( FileHead->head == tmp ) FileHead->head = tmp->next;
-        tmp->WriteBack();
+        if( tmp->dirty )
+            tmp->WriteBack();
         tmp->clear();
         ret = tmp;
     }
