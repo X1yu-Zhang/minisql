@@ -554,7 +554,7 @@ void Interpreter::EXEC_CREATE_TABLE() {
             check_index += 17;
             string temp = getWord(check_index, check_index);
             for (int j = 0; j < i ; j++)
-                if (attr_.name->_Equal(temp))
+                if (attr_.name[j] == temp)
                 {
                     primary = j;
                     break;

@@ -8,5 +8,8 @@ public:
     CatalogManager(/* args */);
     ~CatalogManager();
     bool hasTable( string table_name );
+    bool hasAttribute( string table_name , string attr_name );
+    Attribute getAttribute( string table_name );
+    void showTable( string table_name );
 };
 #endif
