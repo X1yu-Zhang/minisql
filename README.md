@@ -5,7 +5,7 @@
 ```c++
 //储存数据类型和对应数据
 struct Data {
-    int type;    -1：int,0:float,1~255:string的长度+1
+    int type;    //-1：int,0:float,1~255:string的长度+1
     int datai;
     float dataf;
     std::string datas;
@@ -139,8 +139,8 @@ private:
 	Table unionTable(Table& table1, Table& table2, string target_attr, Where where);
 	//用于多条件查询时的or条件合并
 	Table joinTable(Table& table1, Table& table2, string target_attr, Where where);
-	RecordManager record;
-	CatalogManager catalog;
+	RecordManager& record;
+	CatalogManager& catalog;
 };
 ```
 
