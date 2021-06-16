@@ -2,7 +2,7 @@
 
 ## 1.关于属性，元组和表的定义部分
 
-```
+```c++
 //储存数据类型和对应数据
 struct Data {
     int type;    -1：int,0:float,1~255:string的长度+1
@@ -12,7 +12,7 @@ struct Data {
 };
 ```
 
-```
+```c++
 //Where存放一组判断语句
 struct Where {
     Data data; //数据
@@ -20,7 +20,7 @@ struct Where {
 };
 ```
 
-```
+```c++
 //索引
 struct Index {
     int num;  //index的总数
@@ -29,7 +29,7 @@ struct Index {
 };
 ```
 
-```
+```c++
 //属性
 struct Attribute {
     int num;  //存放table的属性数
@@ -41,7 +41,7 @@ struct Attribute {
 };
 ```
 
-```
+```c++
 //元祖
 class Tuple {
 private:
@@ -59,7 +59,7 @@ public:
 };
 ```
 
-```
+```c++
 class Table {
 private:
     string title_;  //表名
@@ -87,7 +87,7 @@ public:
 
 ## 2.INTERPRETER
 
-```
+```c++
 class Interpreter {
 public:
 	Interpreter();
@@ -122,7 +122,7 @@ interpreter部分负责程序与使用者之间的交互关系
 
 ## 3.API部分
 
-```
+```c++
 class API {
 public:
 	API();
@@ -146,7 +146,7 @@ private:
 
 提供与其他模块的接口
 
-```
+```c++
 Table selectRecord(string table_name, vector<string> target_attr, vector<Where> where, char operation);
 ```
 
@@ -158,7 +158,7 @@ Table selectRecord(string table_name, vector<string> target_attr, vector<Where> 
 
 
 
-```
+```c++
 int deleteRecord(string table_name, string target_attr, Where where);
 ```
 
@@ -168,7 +168,7 @@ int deleteRecord(string table_name, string target_attr, Where where);
 
 功能：根据where条件调用recordmanager的成员函数函数，删除元组
 
-```
+```c++
 void insertRecord(string table_name, Tuple& tuple);
 ```
 
@@ -178,7 +178,7 @@ void insertRecord(string table_name, Tuple& tuple);
 
 功能：向recordmanager中的table中调用成员函数插入元组
 
-```
+```c++
 bool createTable(string table_name, Attribute attribute, int primary, Index index);
 ```
 
@@ -190,7 +190,7 @@ bool createTable(string table_name, Attribute attribute, int primary, Index inde
 
 
 
-```
+```c++
 bool dropTable(string table_name);
 ```
 
@@ -202,7 +202,7 @@ bool dropTable(string table_name);
 
 
 
-```
+```c++
 bool createIndex(string table_name, string index_name, string attr_name);
 ```
 
@@ -214,7 +214,7 @@ bool createIndex(string table_name, string index_name, string attr_name);
 
 
 
-```
+```c++
 bool dropIndex(string table_name, string index_name);
 ```
 
