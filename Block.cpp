@@ -1,7 +1,7 @@
 #include "Block.h"
 Block :: Block():filename(""),file(NULL),dirty(false),\
 pin(false),offsetNum(-1),UsingSize(0),\
-time(0),next(NULL),pre(NULL),data(new char[BLOCK_SIZE]()){};
+time(0),next(NULL),pre(NULL),end(false),data(new char[BLOCK_SIZE]()){};
 Block :: ~Block(){
     if ( this->dirty && this->offsetNum != -1 ) WriteBack();
     delete data;
@@ -41,6 +41,7 @@ void Block :: ReadIn(){
     if( this->data == NULL )		
 	    this->data = new char[BLOCK_SIZE]();
 	file.read( this->data, BLOCK_SIZE );
+    if( file.eof() ) this->end = true;
     UsingSize = file.gcount();
     file.close();
 }
@@ -58,14 +59,12 @@ void Block :: SetUsingSize( int size ){
     UsingSize += size;
 }
 void Block :: write(int offset, const char * data, int length){
-    for(int i = 0; i < length ;i ++ ){
-        this->data[offset + i] = data[i];
-    }
+    memcpy( this->data+offset , data, length);
     SetDirty();
 }
 char * Block :: FetchRecord( int index , int size ){
     char * ret = new char[size];
-    int offset = index * size;
+    int offset = index * ( size + 1 );
     memcpy(ret , data + offset , size);
     return ret;
 }

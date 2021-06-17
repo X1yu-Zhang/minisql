@@ -311,6 +311,7 @@ public:
     Block * GetEmptyBlock();//获得一个空的块
     Block * GetReplaceBlock();
     Block * GetBlockHead( File * file );//获得第一个块
+    void DeleteRecord( Block * b, int offset );
     void DeleteFileFromList( string filename );//关掉文件
     void CloseFile( File * file ); // 关掉某个文件
     void ShowInfo(Block * tmp); // 调试用
@@ -327,3 +328,12 @@ public:
 如果进行插入或者删除操作，可使用Block的Write 函数，插入可给一条 record 的char * 的数组，并且给予插入的大小，删除可给全空的char * , 之后需要调用`SetDirty()`,`SetUsingSize()`对块的属性进行修改。Buffer Manager 不考虑记录的连续性的问题，需要Record Manager 进行对记录的移动。
 
 如果进行更改，也可调用write ，只不过只需要`SetDirty()`即可，不需要`SetUsingSize()`
+
+
+## DBFile 
+
+### Record
+
+Record 文件夹中存入了数据库中表的记录。其中，一个表的记录存入一个文件中，如 students 表的信息存入 "students.db"。
+
+在每个文件中，记录的格式如下保存 

@@ -18,6 +18,7 @@ private:
     string filename;
     File * file;
     bool dirty;
+    bool end;
     bool pin;
     int offsetNum;
     int UsingSize;
@@ -30,7 +31,7 @@ public:
     Block();
     ~Block();
     void clear();
-    friend class buffermanager;
+    friend class BufferManager;
     void SetPin();
     void ClearPin();
     void SetDirty();

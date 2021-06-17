@@ -1,5 +1,8 @@
 #ifndef _CATALOGMANAGER_H_
 #define _CATALOGMANAGER_H_
+#include <string>
+#include "tuple.h"
+using namespace std;
 class CatalogManager
 {
 private:

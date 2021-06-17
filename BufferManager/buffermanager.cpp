@@ -1,5 +1,5 @@
-#include "buffermanager.h"
-File * buffermanager :: GetFile( string table_name, int type ){
+#include "BufferManager.h"
+File * BufferManager :: GetFile( string table_name, int type ){
     File * ret = NULL;
     File * tail = NULL;
     if( FileHead != NULL ){
@@ -19,18 +19,19 @@ File * buffermanager :: GetFile( string table_name, int type ){
             ret->pre = tail;
             tail->next = ret;
         }
+        ret->ReadFreeList();
     }
     return ret;
 }
-buffermanager :: ~buffermanager(){
+BufferManager :: ~BufferManager(){
     File * next;
     for(File * tmp = FileHead ; tmp ; tmp = next){
         next = tmp->next;
-        delete tmp;
+        CloseFile(tmp);
     }
 }
 
-Block * buffermanager :: GetReplaceBlock(){
+Block * BufferManager :: GetReplaceBlock(){
     clock_t max_clock = clock()*1.0 / 1000;
     Block * ret = NULL;
     for(int i = 0 ; i < BLOCK_NUMBER ; i++ ){
@@ -41,7 +42,7 @@ Block * buffermanager :: GetReplaceBlock(){
     }
     return ret;
 }
-Block * buffermanager :: GetBlock( File * file, Block * position ){
+Block * BufferManager :: GetBlock( File * file, Block * position ){
     string filename = file->filename;
     Block * ret = GetEmptyBlock();
     if( position && !position->next ){
@@ -63,13 +64,12 @@ Block * buffermanager :: GetBlock( File * file, Block * position ){
         file->head = ret;
     }
     ret->SetClock();
-    if( ret->data == NULL ) ret->data = new char[BLOCK_SIZE]();
     ret->file = file;
     ret->filename = filename;
     ret->ReadIn();
     return ret;
 }
-void buffermanager :: WriteBackAll(){
+void BufferManager :: WriteBackAll(){
     for( File * tmp = FileHead;tmp; tmp = tmp->next){
         Block * next;
         for(Block * btmp = tmp->head; btmp ; btmp = next){
@@ -80,14 +80,14 @@ void buffermanager :: WriteBackAll(){
         }
     }
 }
-Block* buffermanager :: GetBlockHead( File * file ){
+Block* BufferManager :: GetBlockHead( File * file ){
     if( file->head && file->head->offsetNum == 0 ){
         return file->head;
     }else{
         return GetBlock( file, NULL );
     }
 }
-Block * buffermanager :: GetNextBlock( File * file, Block * position ){
+Block * BufferManager :: GetNextBlock( File * file, Block * position ){
     Block * ret;
     if( position->next ){
         if( position->offsetNum == position->next->offsetNum - 1){
@@ -96,12 +96,15 @@ Block * buffermanager :: GetNextBlock( File * file, Block * position ){
             ret = GetBlock(file,position);
         }
     }else{
-        ret = GetBlock( file , position );
+        if( position->end ) ret = NULL;
+        else{
+            ret = GetBlock(file,position);
+        }
     }
     return ret;
 }
 
-Block * buffermanager :: GetBlockByNum( File * file , int offsetNum ){
+Block * BufferManager :: GetBlockByNum( File * file , int offsetNum ){
     Block * ret;
     if( offsetNum == 0 )
         ret = file->head;
@@ -118,11 +121,11 @@ void converse( char t ){
     else t += '0';
     cout << t;
 }
-void buffermanager :: ShowInfo(Block * tmp){
+void BufferManager :: ShowInfo( Block * tmp ){
     for(Block * btmp = tmp ; btmp ; btmp = btmp -> next){
-        cout << btmp->offsetNum << endl;
-        cout << btmp->UsingSize << endl;
-        for(int i = 0;i < btmp->UsingSize + 4 ; i++ ){
+        cout << "Block Num      : " << btmp->offsetNum << endl;
+        cout << "Block UsingSize: " << btmp->UsingSize << endl;
+        for(int i = 0;i < btmp->UsingSize  ; i++ ){
             unsigned char t = btmp->data[i];
             converse(t/16);
             converse(t%16);
@@ -131,7 +134,7 @@ void buffermanager :: ShowInfo(Block * tmp){
         cout << endl;
     }
 }
-Block * buffermanager :: GetEmptyBlock(){
+Block * BufferManager :: GetEmptyBlock(){
     Block * ret;
     if ( total_block < BLOCK_NUMBER ){
         for(int i = 0 ;i < BLOCK_NUMBER ; i ++ ){
@@ -154,26 +157,23 @@ Block * buffermanager :: GetEmptyBlock(){
     }
     return ret;
 }
-void buffermanager :: CloseFile( File * file ){
-	Block *tmp = file->head;
-	while (tmp->next)
-	{
-		if (tmp->pre)
-		{
-			tmp->clear();
-            total_block--;
-		}
-		tmp = tmp->next;
-	}
-	tmp->clear();
-	total_block--;
+void BufferManager :: CloseFile( File * file ){
+    file->WriteFreeList();
+	Block * tmp = file->head ,* next;
+    for( ; tmp ; tmp = next){
+        next = tmp->next;
+        if( tmp->dirty )
+            tmp->WriteBack();
+        total_block -- ;
+        tmp->clear();
+    }
 	file->head = NULL;
 	file->filename = "";
 	file->next = NULL;
 	file->pre = NULL;
 	delete file;
 }
-void buffermanager :: DeleteFileFromList( string  filename ){
+void BufferManager :: DeleteFileFromList( string  filename ){
     if( FileHead == NULL )return ;
     for ( File * tmp = FileHead; tmp ; tmp = tmp->next ){
         if( tmp->filename == filename ){
@@ -189,4 +189,24 @@ void buffermanager :: DeleteFileFromList( string  filename ){
             return ;
         }
     }
+}
+
+bool BufferManager :: DeleteRecord( Block * b, int offset ){
+    char tmp = 1;
+    if ( b->data[offset] == 1 ){
+        return false;
+    }
+    b->write(offset , &tmp , 1);
+    File * file = b->file;
+    RecordFreeList now = new FreeListNode;
+    now->next = NULL;
+    now->BlockNum = b->offsetNum;
+    now->offset = offset;
+    if ( file->freelist == NULL )
+        file->freelist = now;
+    else{
+        now->next = file->freelist;
+        file->freelist = now;
+    }
+    return true;
 }
