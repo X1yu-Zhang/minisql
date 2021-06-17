@@ -319,7 +319,69 @@ public:
 };
 ```
 
-在开始一条指令时，需要通过`GetFile()` 获得固定的一个File 的指针，再通过`GetBlock()`获取一个块。
+##### buffermanager 变量及接口说明如下
+
+1. Block_pool 是一个块池，通过block_pool 实现内存管理，total_block 为现有的块数。
+
+2. FileHead 是文件链表的头，这个文件链表中存放着File 的相关信息，如表名，是index还是record，
+
+```c++
+File * GetFile( string tabame, int type );
+```
+输入：表名，表的类型，0为record，1为index
+输出：对应的File* 
+功能：在需要访问某张表时，第一步需要通过`GetFile()` 获得一个File 的指针，这个File指针包含了该表的基本信息，在后面的函数中，都需要根据这个指针来填表中的内容。
+
+```c++
+Block * GetBlock( File * file, Block * position) //获得一个block
+```
+输入：file 指针，block指针position
+输出：一个块的地址
+功能：获得一个块，并将这一个块连入File中的Block的链表。这个块读入的数据是position中第offsetNum + 1个BLOCKSIZE的数据
+
+```c++
+Block * GetNextBlock( File * file , Block * position);// 获得offsetNum
+```
+输入：file 指针，block指针position
+输出：一个块的地址
+功能：获得一个块，块中数据为position的下一个BLOCKSIZE的数据，与GetBlock()类似，但是实际使用时有区别。GetNextBlock() 为返回offsetNum + 1的块，当链表中已经存在这个offsetNum + 1 的这个块，那么返回这个块，如果不存在，则读入，再返回
+
+```c++
+Block * GetBlockByNum( File * file , Block * position);// 获得offsetNum
+```
+输入：file 指针，block指针position
+输出：一个块的地址
+功能：通过块号，获得一个块的地址。
+
+```c++
+ Block * GetEmptyBlock();//获得一个空的块
+```
+输入：
+输出：一个块的地址
+功能：获得一个块，这个块不读取内容。
+
+```c++
+ Block * GetBlockHead( File * file );//获得第一个块
+```
+
+输入：一个文件的指针
+输出：获得第一个块
+功能：获得一个表的第一个BLOCKSIZE的内容的块
+
+```c++
+Block * GetReplaceBlock();
+```
+输入：
+输出：一个待替换的块
+功能：通过LRU算法，获得一个可以被替换的块，上层无需考虑此函数。
+
+```c++
+void DeleteFileFromList( string filename );//关掉文件
+void CloseFile( File * file ); // 关掉某个文件
+```
+
+功能：给出一个文件名，删除这个文件节点，CloseFile为辅助函数
+
 
 块需要读入相应offsetNum 的内容，例如，offsetNum = 1，读入第2 (offsetNum+1) 个4kb的内容
 
