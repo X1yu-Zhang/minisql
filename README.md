@@ -398,4 +398,8 @@ void CloseFile( File * file ); // 关掉某个文件
 
 Record 文件夹中存入了数据库中表的记录。其中，一个表的记录存入一个文件中，如 students 表的信息存入 "students.db"。
 
-在每个文件中，记录的格式如下保存 
+在每个文件中，每条记录的格式如下保存，其中，deleted位占用一个byte，表示数据是否被删除了。 
+
+[deleted] [    record ] [deleted][ record ]
+
+Record文件夹中，还存在FreeList，表示这个文件中哪些位置可以存储。
