@@ -37,9 +37,10 @@ public:
     void SetDirty();
     void ClearDirty();
     void SetClock();
+    void SetOffsetNum();
     void WriteBack();
     void ReadIn();
-    void write(int offset, const char * data,int length);
+    void write( int offset, const char * data,int length );
     void SetUsingSize(int size);
     char * FetchRecord( int offset , int size );
     char * GetContent();

@@ -15,12 +15,14 @@ public:
     BufferManager():FileHead(NULL),total_block(0){};
     ~BufferManager();
     File * GetFile( string table_name, int type );
-    Block * GetBlock( File * file, Block * position );
+
     Block * GetNextBlock( File * file , Block * position);
     Block * GetBlockByNum( File * file , int offsetNum );
     Block * GetEmptyBlock();
-    Block * GetReplaceBlock();
     Block * GetBlockHead( File * file );
+    Block * GetBlock( File * file, Block * position );
+    Block * GetIndexBlock( File * file );
+    Block * GetReplaceBlock();
     bool DeleteRecord( Block * b, int offset );
     void DeleteFileFromList( string filename );
     void CloseFile( File * file );

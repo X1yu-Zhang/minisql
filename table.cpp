@@ -100,3 +100,38 @@ void Table::showTable(int limit) {
     for (int index = 0; index < limit && index < tuple_.size(); index++)
         tuple_[index].showTuple();
 }
+int Table :: HasAttribute( string AttributeName ){
+    for ( int i = 0 ; i < attr_.num ; i ++ ){
+        if( attr_.name[i] == AttributeName ){
+            return i;
+        }
+    }
+    return -1;
+}
+
+string Table :: GetIndexName( int t ){
+    if( t == -1 ) return "";
+    return this->attr_.index_name[t];
+}
+
+void Table :: SetTitle( string name ){
+    title_ = name;
+}
+istream& operator>>( istream & in , Table & t){
+    in >> t.attr_.num >> t.attr_.primary_key;
+    for(int i = 0; i < t.attr_.num; i ++ ){
+        in >> t.attr_.name[i] >> t.attr_.type[i];
+        in >> t.attr_.unique[i] >> t.attr_.has_index[i];
+        if ( t.attr_.has_index[i] ) in >> t.attr_.index_name[i];
+    }
+}
+
+ostream& operator<<( ostream & out , const Table & t){
+    out << t.attr_.num << t.attr_.primary_key << endl;
+    for(int i = 0; i < t.attr_.num; i ++ ){
+        out << t.attr_.name[i] << t.attr_.type[i];
+        out << t.attr_.unique[i] << t.attr_.has_index[i];
+        if ( t.attr_.has_index[i] ) out << t.attr_.index_name[i];
+        out << endl;
+    }
+}

@@ -1,18 +1,24 @@
 #ifndef _CATALOGMANAGER_H_
 #define _CATALOGMANAGER_H_
 #include <string>
-#include "tuple.h"
+#include <fstream>
+#include <map>
+#include "../table.h"
+#include "../tuple.h"
 using namespace std;
 class CatalogManager
 {
 private:
-    /* data */
+    map<string , Table > TABLESET;
+    map<string , string> INDEXSET;
 public:
     CatalogManager(/* args */);
     ~CatalogManager();
-    bool hasTable( string table_name );
-    bool hasAttribute( string table_name , string attr_name );
-    Attribute getAttribute( string table_name );
-    void showTable( string table_name );
+    Table& GetTable( string table_name );
+    bool CreateTable( Table & t );
+    bool DeleteTable( string name );
+    bool DeleteIndex( string name );
+    bool FindIndex( string name );
+    bool FindTable( string name );
 };
 #endif
