@@ -1,11 +1,13 @@
 #include "interpreter.h"
 
+Interpreter::Interpreter() {
+}
 
-//ï¿½ï¿½query
+//¶Áquery
 void Interpreter::getQuery() 
 {
     string tmp;
-    //ï¿½Ãµï¿½Ò»ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½Îªï¿½Öºï¿½Ê±ï¿½ï¿½ï¿½ï¿½
+    //µÃµ½Ò»ÐÐµÄËùÓÐ×Ö·û£¬µ±×îºóÒ»¸ö×Ö·ûÎª·ÖºÅÊ±½áÊø
     do 
     {
         cout << ">>> ";
@@ -13,16 +15,16 @@ void Interpreter::getQuery()
         query += tmp;
         query += ' ';
     } while (tmp[tmp.length() - 1] != ';');
-    //ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Î²ï¿½ï¿½Ê¶ï¿½ï¿½
+    //ÔÚ×îºó²¹Ò»¸ö½áÎ²±êÊ¶·û
     query[query.length() - 2] = '\0';
-    //ï¿½ï¿½ï¿½ï¿½Normalizeï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ä¹æ·¶ï¿½ï¿½
+    //µ÷ÓÃNormalize½øÐÐ×Ö·û´®µÄ¹æ·¶»¯
     Normalize();
 }
 
-//ï¿½ï¿½queryï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+//½«query¸ñÊ½¹æÕû
 void Interpreter::Normalize() 
 {
-    //ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Õ¸ï¿½ï¿½Ô²ï¿½Ö¶ï¿½ï¿½ï¿½
+    //ÔÚËùÓÐµÄÌØÊâ·ûºÅµÄÇ°ºóÔö¼ÓÒ»¸ö¿Õ¸ñÒÔ²ð·Ö¶ÎÂä
     for (int pos = 0; pos < query.length(); pos++) 
     {
         if (query[pos] == '*' || query[pos] == '=' || query[pos] == ',' || query[pos] == '(' || query[pos] == ')' || query[pos] == '<' || query[pos] == '>') 
@@ -33,10 +35,10 @@ void Interpreter::Normalize()
                 query.insert(++pos, " ");
         }
     }
-    //ï¿½Ú½ï¿½Î²ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Õ¸ï¿½ï¿½Ô¹æ·¶ï¿½ï¿½
+    //ÔÚ½áÎ²²¹Ò»¸ö¿Õ¸ñÒÔ¹æ·¶»¯
     query.insert(query.length() - 2, " ");
-    //É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¶ï¿½ï¿½ï¿½Õ¸ï¿½
-    //ï¿½È¼ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Õ¸ï¿½ï¿½Ù³ï¿½ï¿½Ö¿Õ¸ï¿½ï¿½É¾ï¿½ï¿½
+    //É¾³ý¶ÎÂäÖÐµÄ¶àÓà¿Õ¸ñ
+    //ÏÈ¼ì²éµÚÒ»¸ö¿Õ¸ñ£¬ÔÙ³öÏÖ¿Õ¸ñ¾ÍÉ¾µô
     string::iterator it;
     int flag = 0;
     for (it = query.begin(); it < query.end(); it++) {
@@ -57,11 +59,11 @@ void Interpreter::Normalize()
     }
    
     trim(query);
-    //ï¿½ï¿½queryï¿½Äµï¿½Ò»ï¿½ï¿½ï¿½Ê±ï¿½ÎªÐ¡Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
+    //°ÑqueryµÄµÚÒ»¸ö´Ê±äÎªÐ¡Ð´£¬±ãÓÚºóÐøÅÐ¶Ï
     query = getLower(query, 0);
 }
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö³ï¿½ï¿½ï¿½
+//ÇóÕûÐÎÊý×Ö³¤¶È
 int Interpreter::getBits(int num) {
     int bit = 0;
     if (num == 0)
@@ -77,7 +79,7 @@ int Interpreter::getBits(int num) {
     return bit;
 }
 
-//ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Ö³ï¿½ï¿½ï¿½
+//ÇóÐ¡ÊýÊý×Ö³¤¶È
 int Interpreter::getBits(float num) {
     int bit = 0;
     if ((int)num == 0)
@@ -91,10 +93,10 @@ int Interpreter::getBits(float num) {
         bit++;
         integer_part /= 10;
     }
-    return bit + 3;//Îªï¿½Ë±ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Äºï¿½Î»
+    return bit + 3;//ÎªÁË±£ÁôÐ¡ÊýµãµÄºó¼¸Î»
 }
 
-//ï¿½Ãµï¿½Ò»ï¿½ï¿½Î»ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//µÃµ½Ò»¸öÎ»ÖÃµÄÊôÐÔÀàÐÍ
 int Interpreter::getType(int pos, int& end_pos) {
     string type = getWord(pos, end_pos);
     if (type == "int")
@@ -109,7 +111,7 @@ int Interpreter::getType(int pos, int& end_pos) {
     }
     throw 1;
 }
-//È¥ï¿½ï¿½sï¿½ï¿½Ç°ï¿½ï¿½Ä¿Õ¸ï¿½
+//È¥³ýsÖÐÇ°ºóµÄ¿Õ¸ñ
 string trim(string s)
 {
     int i = 0; while (s[i] == ' ') i++;
@@ -117,7 +119,7 @@ string trim(string s)
     return s.substr(i, j - i + 1);
 }
 
-//ï¿½ï¿½sï¿½Ð°Ñ´ï¿½pï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Õ¸ï¿½Ä´Ê±ï¿½ÎªÐ¡Ð´
+//°ÑsÖÐ°Ñ´Óp¿ªÊ¼µ½¿Õ¸ñµÄ´Ê±äÎªÐ¡Ð´
 string Interpreter::getLower(string s,int p)
 {
     for (int index = p;; index++) {
@@ -128,7 +130,7 @@ string Interpreter::getLower(string s,int p)
     }
     return s;
 }
-//ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Î»
+//·µ»ØÂß¼­ÔËËã·û²¢¼ÇÂ¼½áÊøÎ»
 string Interpreter::getRelation(int pos, int& end_pos) {
     string PartWord = "";
     for (int pos1 = pos; pos1 < (int)query.length(); pos1++) 
@@ -144,7 +146,7 @@ string Interpreter::getRelation(int pos, int& end_pos) {
     }
     return PartWord;
 }
-//ï¿½ï¿½ï¿½Øµï¿½ï¿½Ê²ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Î»
+//·µ»Øµ¥´Ê²¢¼ÇÂ¼½áÊøÎ»
 string Interpreter::getWord(int pos, int& end_pos) {
     string PartWord = "";
     for (int pos1 = pos; pos1 < (int)query.length(); pos1++) {
@@ -157,14 +159,14 @@ string Interpreter::getWord(int pos, int& end_pos) {
     }
     return PartWord;
 }
-//Ö´ï¿½ï¿½query
+//Ö´ÐÐquery
 void Interpreter::EXEC() {
     try {
-        //ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Äµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //¸ù¾Ý×Ö·û´®µÄµÚÒ»¸öµ¥´ÊÀ´¶ÔËù½øÐÐµÄ²Ù×÷½âÎö
         if (query.substr(0, 6) == "select") {
             EXEC_SELECT();
         }
-        //ï¿½ï¿½ï¿½ï¿½dropï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ð½ï¿½Ò»ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½
+        //ÓÉÓÚdropÓÐÁ½ÖÖÇé¿ö£¬ËùÒÔÐèÒª½øÐÐ½øÒ»²½µÄ½âÎö
         else if (query.substr(0, 4) == "drop") {
             query = getLower(query, 5);
             if (query.substr(5, 5) == "table")
@@ -175,7 +177,7 @@ void Interpreter::EXEC() {
         else if (query.substr(0, 6) == "insert") {
             EXEC_INSERT();
         }
-        //createÒ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //createÒ²ÓÐÁ½ÖÖÇé¿ö
         else if (query.substr(0, 6) == "create") {
             query = getLower(query, 7);
             if (query.substr(7, 5) == "table") {
@@ -188,11 +190,11 @@ void Interpreter::EXEC() {
         else if (query.substr(0, 6) == "delete") {
             EXEC_DELETE();
         }
-        //ï¿½ï¿½ï¿½ï¿½describeï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã»ï¿½ï¿½ß¼ï¿½
+        //µ÷ÓÃdescribeÓÐÁ½ÖÖ·½Ê½£¬ËùÒÔÊ¹ÓÃ»òÂß¼­
         else if (query.substr(0, 8) == "describe" || query.substr(0, 4) == "desc") {
             EXEC_SHOW();
         }
-        else if (query.substr(0, 4) == "exit" && query[5] == '\0') {
+        else if (query.substr(0, 4) == "exit" || query.substr(0,4)=="quit"&& query[5] == '\0') {
             EXEC_EXIT();
         }
         else if (query.substr(0, 8) == "execfile") {
@@ -201,7 +203,7 @@ void Interpreter::EXEC() {
         else if (query.substr(0, 4) == "help" && query[5] == '\0') {
             EXEC_HELP();
         }
-        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½î¶¼ï¿½ï¿½ï¿½Ü¶ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½×³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+        //Èç¹ûËùÓÐÖ¸Áî¶¼²»ÄÜ¶ÔÓ¦£¬ÔòÅ×³öÊäÈë¸ñÊ½´íÎó
         else {
             throw input_format_error();
         }
@@ -242,7 +244,8 @@ void Interpreter::EXEC() {
 
 //create index
 void Interpreter::EXEC_CREATE_INDEX() {
-    
+    CatalogManager CM;
+    API API;
     string index_name;
     string table_name;
     string attr_name;
@@ -250,33 +253,33 @@ void Interpreter::EXEC_CREATE_INDEX() {
     index_name = getWord(13, check_index);
     check_index++;
     if (getLower(query, check_index).substr(check_index, 2) != "on")
-        throw 1;//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+        throw 1;//¸ñÊ½´íÎó
     table_name = getWord(check_index + 3, check_index);
     if (!CM.hasTable(table_name))
         throw table_not_exist();//table not exist
     if (query[check_index + 1] != '(')
-        throw 1;//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+        throw 1;//¸ñÊ½´íÎó
     attr_name = getWord(check_index + 3, check_index);
     if (query[check_index + 1] != ')' || query[check_index + 3] != '\0')
-        throw 1;//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
-    _API.createIndex(table_name, index_name, attr_name);
+        throw 1;//¸ñÊ½´íÎó
+    API.createIndex(table_name, index_name, attr_name);
     cout << ">>> SUCCESS" << endl;
 }
 //drop index
 void Interpreter::EXEC_DROP_INDEX() {
-    
+    API API;
     string table_name;
     string index_name;
     int check_index;
     index_name = getWord(11, check_index);
     check_index++;
-    //ï¿½ï¿½ï¿½ï¿½Ê½
+    //¼ì²é¸ñÊ½
     if (getLower(query, check_index).substr(check_index, 2) != "on")
-        throw 1;//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+        throw 1;//¸ñÊ½´íÎó
     table_name = getWord(check_index + 3, check_index);
     if (query[check_index + 1] != '\0')
-        throw 1;//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
-    _API.dropIndex(table_name, index_name);
+        throw 1;//¸ñÊ½´íÎó¯¯
+    API.dropIndex(table_name, index_name);
     cout << ">>> SUCCESS" << endl;
 }
 
@@ -285,23 +288,23 @@ void Interpreter::EXEC_EXIT() {
     throw exit_command();
 }
 
-//ï¿½Ä¼ï¿½ï¿½ï¿½È¡
+//ÎÄ¼þ¶ÁÈ¡
 void Interpreter::EXEC_FILE() {
     int check_index = 0;
     int start_index = 0;
     string tmp_query;
-    //ï¿½ï¿½È¡ï¿½Ä¼ï¿½Â·ï¿½ï¿½
+    //¶ÁÈ¡ÎÄ¼þÂ·¾¶
     string file_path = getWord(9, check_index);
-    //ï¿½Ð¶Ï¸ï¿½Ê½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
+    //ÅÐ¶Ï¸ñÊ½£¨Â·¾¶ºó»¹ÓÐÆäËû×Ö·û£©
     if (query[check_index + 1] != '\0')
-        throw 1;//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+        throw 1;//¸ñÊ½´íÎó¯¯
     string::iterator it;
     fstream fs(file_path);
     stringstream ss;
     ss << fs.rdbuf();
     tmp_query = ss.str();
     check_index = 0;
-    //ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
+    //ÖðÌõÖ´ÐÐ
     do {
         while (tmp_query[check_index] != '\n')
             check_index++;
@@ -313,22 +316,24 @@ void Interpreter::EXEC_FILE() {
     } while (tmp_query[check_index] != '\0');
 }
 
-//Ö±ï¿½Ó´ï¿½Ó¡table
+//Ö±½Ó´òÓ¡table
 void Interpreter::EXEC_SHOW() {
+    CatalogManager CM;
     string table_name;
     int check_index;
-    //ï¿½ï¿½ï¿½Øµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ÊµÄ½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+    //·µ»ØµÚÒ»¸öµ¥´ÊµÄ½áÊøÎ»ÖÃ
     getWord(0, check_index);
-    //ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½
+    //µÃµ½±íÃû
     table_name = getWord(check_index + 1, check_index);
     if (query[check_index + 1] != '\0')
-        throw 1;//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
-    CM.showTable(table_name);
+        throw 1;//¸ñÊ½´íÎó¯¯
+  //  CM.showTable(table_name);
 }
 
-//É¾ï¿½ï¿½
+//É¾³ý
 void Interpreter::EXEC_DELETE() {
-    
+    API API;
+    CatalogManager CM;
     Where where_delete;
     int check_index;
     string table_name;
@@ -340,18 +345,18 @@ void Interpreter::EXEC_DELETE() {
     if (!CM.hasTable(table_name))
         throw table_not_exist();
 
-    //É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+    //É¾³ýËùÓÐÐÅÏ¢
     if (query[check_index + 1] == '\0') {
         attr_name = "";
-        _API.deleteRecord(table_name, attr_name, where_delete);
+        API.deleteRecord(table_name, attr_name, where_delete);
         cout << ">>> SUCCESS" << endl;
         return;
     }
 
     if (getLower(query, check_index + 1).substr(check_index + 1, 5) != "where")
-        throw 1;//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+        throw 1;//¸ñÊ½´íÎó
     attr_name = getWord(check_index + 7, check_index);
-    //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½
+    //ÅÐ¶ÏÊÇ·ñ´æÔÚ¸ÃÊôÐÔ
     if (!CM.hasAttribute(table_name, attr_name))
         throw attribute_not_exist();
     relation = getRelation(check_index + 1, check_index);
@@ -368,7 +373,7 @@ void Interpreter::EXEC_DELETE() {
     else if (relation == "! =")
         where_delete.relation_character = NOT_EQUAL;
     else
-        throw 1;//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+        throw 1;//¸ñÊ½´íÎó¯¯
     string value_delete = getWord(check_index + 1, check_index);
 
     Attribute tmp_attr = CM.getAttribute(table_name);
@@ -382,7 +387,7 @@ void Interpreter::EXEC_DELETE() {
                     where_delete.data.datai = stringToNum<int>(value_delete);
                 }
                 catch (...) {
-                    throw data_type_conflict();//×ªï¿½ï¿½Ê§ï¿½ï¿½
+                    throw data_type_conflict();//×ª»»Ê§°Ü
                 }
                 break;
             case 0:
@@ -390,30 +395,31 @@ void Interpreter::EXEC_DELETE() {
                     where_delete.data.dataf = stringToNum<float>(value_delete);
                 }
                 catch (...) {
-                    throw data_type_conflict();//×ªï¿½ï¿½Ê§ï¿½ï¿½
+                    throw data_type_conflict();//×ª»¯Ê§°Ü
                 }
                 break;
-            default://ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªstringÊ±
+            default://Êý¾ÝÀàÐÍÎªstringÊ±
                 try {
                     if (!(value_delete[0] == '\'' && value_delete[value_delete.length() - 1] == '\'') && !(value_delete[0] == '"' && value_delete[value_delete.length() - 1] == '"'))
-                        throw 1;//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+                        throw 1;//¸ñÊ½²»¶Ô
                     where_delete.data.datas = value_delete.substr(1, value_delete.length() - 2);
                 }
                 catch (...) {
-                    throw data_type_conflict();//×ªï¿½ï¿½Ê§ï¿½ï¿½
+                    throw data_type_conflict();//×ª»»Ê§°Ü
                 }
                 break;
             }
             break;
         }
     }
-    _API.deleteRecord(table_name, attr_name, where_delete);
+    API.deleteRecord(table_name, attr_name, where_delete);
     cout << ">>> SUCCESS" << endl;
 }
 
 //Insert
 void Interpreter::EXEC_INSERT() {
-    
+    API API;
+    CatalogManager CM;
     string table_name;
     int check_index;
     Tuple tuple_insert;
@@ -432,10 +438,10 @@ void Interpreter::EXEC_INSERT() {
     attr_exist = CM.getAttribute(table_name);
     check_index--;
     int num_of_insert = 0;
-    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½Ôªï¿½Ø½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½
+    //¶ÔÀ¨ºÅÄÚµÄËùÓÐÔªËØ½øÐÐ±éÀú
     while (query[check_index + 1] != '\0' && query[check_index + 1] != ')') {
         if (num_of_insert >= attr_exist.num)
-            throw 1;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½
+            throw 1;//ÊôÐÔÊýÁ¿²»Æ¥Åä
         check_index += 3;
         string value_insert = getWord(check_index, check_index);
         Data insert_data;
@@ -446,7 +452,7 @@ void Interpreter::EXEC_INSERT() {
                 insert_data.datai = stringToNum<int>(value_insert);
             }
             catch (...) {
-                throw data_type_conflict();//×ªï¿½ï¿½Ê§ï¿½ï¿½
+                throw data_type_conflict();//×ª»»Ê§°Ü
             }
             break;
         case 0:
@@ -454,16 +460,16 @@ void Interpreter::EXEC_INSERT() {
                 insert_data.dataf = stringToNum<float>(value_insert);
             }
             catch (...) {
-                throw data_type_conflict();//×ªï¿½ï¿½Ê§ï¿½ï¿½
+                throw data_type_conflict();//×ª»»Ê§°Ü
             }
             break;
-        default://ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªstringÊ±
+        default://Êý¾ÝÀàÐÍÎªstringÊ±
             try {
                 if (!(value_insert[0] == '\'' && value_insert[value_insert.length() - 1] == '\'') 
                  && !(value_insert[0] == '"' && value_insert[value_insert.length() - 1] == '"'))
-                    throw input_format_error();//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½È·
+                    throw input_format_error();//¸ñÊ½²»ÕýÈ·
                 if (value_insert.length() - 1 > attr_exist.type[num_of_insert])
-                    throw input_format_error();//ï¿½ï¿½ï¿½È³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                    throw input_format_error();//³¤¶È³¬¹ýÏÞÖÆ
                 insert_data.datas = value_insert.substr(1, value_insert.length() - 2);
             }
             catch (input_format_error error) {
@@ -478,15 +484,15 @@ void Interpreter::EXEC_INSERT() {
         num_of_insert++;
     }
     if (query[check_index + 1] == '\0')
-        throw input_format_error();//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+        throw input_format_error();//¸ñÊ½´íÎó
     if (num_of_insert != attr_exist.num)
-        throw input_format_error();//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·
+        throw input_format_error();//²åÈëµÄÊýÁ¿²»ÕýÈ·
 
-    _API.insertRecord(table_name, tuple_insert);
+    API.insertRecord(table_name, tuple_insert);
     cout << ">>> SUCCESS" << endl;
 }
 
-//ï¿½ï¿½Ó¡helpï¿½ï¿½ï¿½ï¿½
+//´òÓ¡helpÄÚÈÝ
 void Interpreter::EXEC_HELP()
 {
     cout << "Supported commands:" << endl;
@@ -498,7 +504,6 @@ void Interpreter::EXEC_HELP()
     cout << "  create index indexName on tableName (attrName);" << endl;
     cout << "" << endl;
     cout << "  insert into tableName values(val1, val2, ... , valN);" << endl;
-    cout << "  insert into tableName values(attr1=val1, attr2=val2, ... , attrN=valN);" << endl;
     cout << "" << endl;
     cout << "  delete * from tableName [where condition];" << endl;
     cout << "  delete (attr1, attr2, ... , attrN) from tableName [where condition];" << endl;
@@ -525,17 +530,17 @@ void Interpreter::EXEC_HELP()
 }
 
 void Interpreter::EXEC_DROP_TABLE(){
-    
+    API API;
     string table_name;
     int check_index;
     table_name = getWord(11, check_index);
 
-    _API.dropTable(table_name);
+    API.dropTable(table_name);
     cout << ">>> SUCCESS" << endl;
 }
 
 void Interpreter::EXEC_CREATE_TABLE() {
-    
+    API API;
     Index index;
     string table_name;
     int check_index;
@@ -549,24 +554,25 @@ void Interpreter::EXEC_CREATE_TABLE() {
         check_index += 1;
         attr_.type[i] = getType(check_index, check_index);
         i++;
-        if (query.substr(check_index+3, 11) == "primary key")//ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½
+        if (query.substr(check_index+3, 11) == "primary key")//ÅÐ¶ÏÖ÷Âë
         {
             check_index += 17;
             string temp = getWord(check_index, check_index);
             for (int j = 0; j < i ; j++)
-                if (attr_.name[j] == temp)
+                if (attr_.name[j]._Equal(temp))
                 {
                     primary = j;
                     break;
                 }
-            check_index += 3;
+            check_index += 2;
         }
     }
     attr_.primary_key = primary;
-    _API.createTable(table_name, attr_, primary, index);
+    API.createTable(table_name, attr_, primary, index);
 }
 void Interpreter::EXEC_SELECT() {
-    
+    API API;
+    CatalogManager CM;
     string table_name;
     vector<string> attr_name;
     vector<string> target_name;
@@ -579,9 +585,9 @@ void Interpreter::EXEC_SELECT() {
     char op = 0;
     int check_index;
     int flag = 0;
-    //Ñ¡ï¿½ï¿½Ôªï¿½ï¿½
+    //Ñ¡ÔñÔª×æ
     
-    //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½Îªselect *
+    //ÅÐ¶ÏÊÇ·ñÎªselect *
     if (getWord(7, check_index) == "*")
     {
         flag = 1;
@@ -589,7 +595,7 @@ void Interpreter::EXEC_SELECT() {
     }
     else {
         check_index = 7;
-        //ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½æ¼°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //ÕÒËùÓÐµÄÉæ¼°µ½µÄÊôÐÔ
         while (1) {
             attr_name.push_back(getWord(check_index, check_index));
             if (query[++check_index] != ',')
@@ -600,7 +606,7 @@ void Interpreter::EXEC_SELECT() {
     }
 
     if (getLower(query, check_index).substr(check_index, 4) != "from")
-        throw input_format_error();//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+        throw input_format_error();//¸ñÊ½´íÎó¯¯
     check_index += 5;
     table_name = getWord(check_index, check_index);
     if (!CM.hasTable(table_name))
@@ -608,21 +614,21 @@ void Interpreter::EXEC_SELECT() {
     Attribute tmp_attr = CM.getAttribute(table_name);
     if (!flag) {
         for (int index = 0; index < attr_name.size(); index++) {
-            if (!CM.hasAttribute(table_name, attr_name[index]))
-                throw attribute_not_exist();
+          /*  if (!CM.hasAttribute(table_name, attr_name[index]))
+                throw attribute_not_exist();*/
         }
     }
     else {
-        for (int index = 0; index < tmp_attr.num; index++) {
+       for (int index = 0; index < tmp_attr.num; index++) {
             attr_name.push_back(tmp_attr.name[index]);
         }
     }
     check_index++;
     if (query[check_index] == '\0')
-        output_table = _API.selectRecord(table_name, target_name, where_select, op);
+        output_table = API.selectRecord(table_name, target_name, where_select, op);
     else {
         if (getLower(query, check_index).substr(check_index, 5) != "where")
-            throw input_format_error();//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+            throw input_format_error();//¸ñÊ½´íÎó¯¯
         check_index += 6;
         while (1) {
             tmp_target_name = getWord(check_index, check_index);
@@ -643,7 +649,7 @@ void Interpreter::EXEC_SELECT() {
             else if (relation == "! =")
                 tmp_where.relation_character = NOT_EQUAL;
             else
-                throw input_format_error();//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+                throw input_format_error();//¸ñÊ½´íÎó¯¯
             tmp_value = getWord(check_index + 1, check_index);
             for (int i = 0; i < tmp_attr.num; i++)
             {
@@ -655,7 +661,7 @@ void Interpreter::EXEC_SELECT() {
                             tmp_where.data.datai = stringToNum<int>(tmp_value);
                         }
                         catch (...) {
-                            throw data_type_conflict();//×ªï¿½ï¿½Ê§ï¿½ï¿½
+                            throw data_type_conflict();//×ª»»Ê§°Ü
                         }
                         break;
                     case 0:
@@ -663,20 +669,20 @@ void Interpreter::EXEC_SELECT() {
                             tmp_where.data.dataf = stringToNum<float>(tmp_value);
                         }
                         catch (...) {
-                            throw data_type_conflict();//×ªï¿½ï¿½Ê§ï¿½ï¿½
+                            throw data_type_conflict();//×ª»»Ê§°Ü
                         }
                         break;
                     default:
                         try {
                             if (!(tmp_value[0] != '\'' && tmp_value[tmp_value.length() - 1] != '\'') && !(tmp_value[0] != '"' && tmp_value[tmp_value.length() - 1] != '"'))
-                                throw input_format_error();//ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½È·
+                                throw input_format_error();//¸ñÊ½²»ÕýÈ·
                             tmp_where.data.datas = tmp_value.substr(1, tmp_value.length() - 2);
                         }
                         catch (input_format_error error) {
                             throw input_format_error();
                         }
                         catch (...) {
-                            throw data_type_conflict();//×ªï¿½ï¿½Ê§ï¿½ï¿½
+                            throw data_type_conflict();//×ª»»Ê§°Ü
                         }
                     }
                     break;
@@ -684,7 +690,7 @@ void Interpreter::EXEC_SELECT() {
             }
 
             where_select.push_back(tmp_where);
-            //ï¿½Ò¹ï¿½Ïµï¿½ï¿½ï¿½ï¿½
+            //ÕÒ¹ØÏµÁ¬´Ê
             if (query[check_index + 1] == '\0')
                 break;
             else if (getLower(query, check_index + 1).substr(check_index + 1, 3) == "and")
@@ -697,10 +703,10 @@ void Interpreter::EXEC_SELECT() {
             check_index++;
         }
 
-        output_table = _API.selectRecord(table_name, target_name, where_select, op);
+        output_table = API.selectRecord(table_name, target_name, where_select, op);
     }
 
-    //ï¿½ï¿½ï¿½
+    //Êä³ö
 
     Attribute attr_record = output_table.attr_;
     int use[32] = { 0 };

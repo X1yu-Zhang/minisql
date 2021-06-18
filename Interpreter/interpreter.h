@@ -5,20 +5,26 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include "../API/API.h"
-#include "../exception.h"
-#include "../RecordManager/RecordManager.h"
-#include "../IndexManager/IndexManager.h"
-#include "../CatalogManager/CatalogManager.h"
+#include "API.h"
+#include "exception.h"
 using namespace std;
 #include <sstream>std::stringstream ss;
 
 using namespace std;
 class Interpreter {
 public:
-	Interpreter(CatalogManager & CM ,RecordManager & RM, IndexManager & IM ,API & A):CM(CM),RM(RM),IM(IM),_API(A){}
+	Interpreter();
 	void getQuery();
 	void EXEC();
+
+private:
+	string query;
+	int getType(int pos, int& end_pos);//·µ»ØÊý¾ÝÀàÐÍ
+	int getBits(int num);//·µ»ØÕûÊýµÄ³¤¶È
+	int getBits(float num);//·µ»ØÐ¡Êý³¤¶È
+	string getRelation(int pos, int& end_pos);//·µ»ØÂß¼­¹ØÏµ
+	string getWord(int pos, int& end_pos);//·µ»Øµ¥´Ê
+	string getLower(string s, int p);//±äÐ¡Ð´£¨±ãÓÚÊ¶±ð£©
 	void Normalize();
 	void EXEC_SELECT();
 	void EXEC_DROP_TABLE();
@@ -31,24 +37,11 @@ public:
 	void EXEC_EXIT();
 	void EXEC_FILE();
 	void EXEC_HELP();
-
-private:
-	string query;
-	int getType(int pos, int& end_pos);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-	int getBits(int num);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
-	int getBits(float num);//ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-	string getRelation(int pos, int& end_pos);//ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½Ïµ
-	string getWord(int pos, int& end_pos);//ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½
-	string getLower(string s, int p);//ï¿½ï¿½Ð¡Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½
-	CatalogManager & CM;
-	RecordManager & RM;
-	IndexManager & IM;
-	API & _API;
 };
 
 string trim(string s);
 
-//Êµï¿½ï¿½stringï¿½ï¿½intï¿½ï¿½floatï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½
+//ÊµÏÖstringµ½int»òfloatµÄÀàÐÍ×ª»»
 template <class T>
 T stringToNum(const string& str)
 {
