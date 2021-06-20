@@ -16,7 +16,7 @@ public:
     ~CatalogManager();
     Table& GetTable( string table_name );
     bool CreateTable( Table & t );
-    bool DeleteTable( string name );
+    bool DropTable( string name );
     bool CreateIndex( string name, string table_name );
     bool DeleteIndex( string name );
     bool FindIndex( string name );

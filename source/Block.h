@@ -41,6 +41,7 @@ public:
     void ReadIn();
     void write( int offset, const char * data,int length );
     void SetUsingSize(int size);
+    int GetUsingSize(); 
     int GetBlockOffsetNum();
     char * GetContent();
     bool IsEnd( );

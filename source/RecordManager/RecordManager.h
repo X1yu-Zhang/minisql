@@ -7,7 +7,7 @@
 class RecordManager {
 private:
     BufferManager& bm;
-    IndexManager & cm;
+    IndexManager & im;
 public:
     int DeleteRecord( Table & t , vector<string> target_attr, vector<Where> where );
     void DropTable( string Table_name ); 
@@ -16,6 +16,6 @@ public:
     bool RecordConditionFit(Tuple &t , vector < int > &AttributeName ,vector<Where>& where);
     vector <Tuple> SelectRecord( Table &t, vector < string > &AttributeName ,vector<Where>& where );
     bool CheckUnique( Table & t , Tuple & tuple );
-    void CreateIndex( Table & t ); 
+    void RecordManager :: CreateIndex( Table &t , string AttrName , string index_name  );
 };
 #endif

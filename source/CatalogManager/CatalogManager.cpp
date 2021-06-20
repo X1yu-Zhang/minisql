@@ -48,11 +48,12 @@ bool CatalogManager :: CreateTable( Table & t ){
     INDEXSET.insert( make_pair( t.getTitle()+"_primary", t.getTitle() ));
 }
 
-bool CatalogManager :: DeleteTable( string name ){
+bool CatalogManager :: DropTable( string name ){
     Table &t = TABLESET[name];
     int n = t.attr_.num;
     remove( ("./data/catalog"+name+".db").c_str() );
     remove( ("./data/record/"+name+".db").c_str() );
+    remove( ("./data/record/"+name+"_FreeList.db").c_str() );
     for(int i = 0 ; i < n ; i ++ ){
         if( t.attr_.has_index[i] )
         remove( ("./data/index/"+t.attr_.index_name[i]+".db").c_str() );

@@ -139,7 +139,7 @@ bool IndexManager:: Build_BplusTree_From_File( string KeyType,int KeySize,string
 
 
 bool IndexManager::Create_Index(string IndexName,int KeySize,string KeyType){//done
-    if (IndexSet.find(IndexName) == IndexSet.end())return false;//不存在这个Index
+    if (IndexSet.find(IndexName) != IndexSet.end())return false;//不存在这个Index
     File* index_file=buffer->GetFile(IndexName,1);
     Index *temp_index=new Index;
     temp_index->IndexName=IndexName;

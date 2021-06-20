@@ -48,6 +48,9 @@ void Block :: ReadIn(){
     UsingSize = file.gcount();
     file.close();
 }
+int Block:: GetUsingSize(){
+    return UsingSize;
+}
 void Block :: WriteBack(){
     string filename = this->filename;
     string filetype = ( this->file->type?"index" : "record" );
@@ -59,7 +62,7 @@ void Block :: WriteBack(){
 	file.close();
 }
 void Block :: SetUsingSize( int size ){
-    UsingSize += size;
+    UsingSize = size;
 }
 void Block :: write(int offset, const char * data, int length){
     memcpy( this->data+offset , data, length);

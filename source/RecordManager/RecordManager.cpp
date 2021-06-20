@@ -2,7 +2,7 @@
 
 vector<Tuple> RecordManager :: SelectWithIndex( Table &t ,File * file , string Index_name , Where where){
     vector <Tuple> ret;
-    vector <Search_Info> Fetch = cm.Search_In_Index( Index_name, where );
+    vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where );
     int size = t.GetLength();
     for( int i = 0 ; i < Fetch.size() ; i ++ ){
         Tuple tp;
@@ -139,7 +139,7 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
         }
     }
     int cnt = 0;
-    vector <Search_Info> Fetch = cm.Search_In_Index( Index_name, where[SearchIndex] );
+    vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where[SearchIndex] );
     File * file = bm.GetFile( t.getTitle() , 0 ); 
     if ( Fetch.size() ){
         for( int i = 0 ;i < Fetch.size() ; i++ ){
@@ -149,7 +149,7 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
                 for( int i = 0 ; i < t.attr_.num; i ++ ){
                     if( t.attr_.has_index[i] ){
                         string tmp = Data2String( tempTuple.getData()[i] );
-                        cm.Delete_From_Index( t.attr_.index_name[i], tmp );
+                        im.Delete_From_Index( t.attr_.index_name[i], tmp );
                     }
                 }
                 char DeletedFlag = 1;
@@ -176,9 +176,8 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
     return cnt;
 }
 
-void RecordManager :: DropTable( Table & t ){
-    File * file = bm.GetFile(t.getTitle() , 0);
-    t.Unique.clear();
+void RecordManager :: DropTable( string TableName){
+    File * file = bm.GetFile(TableName , 0);
     bm.ClearTable( file );
 }
 bool RecordManager :: CheckUnique( Table & t , Tuple & tuple ){
@@ -206,20 +205,64 @@ bool RecordManager :: CheckUnique( Table & t , Tuple & tuple ){
 }
 int RecordManager :: InsertRecord( Table &t , Tuple& tuple ){
     File * file = bm.GetFile( t.getTitle(),0 );
+    string data = '\0';
+    for( int i = 0 ; i < tuple.getData().size(); i++ ){
+        data += Data2String(tuple.getData()[i]);
+    }
+    int OffsetNum , offset ;
     if( file->freelist == NULL ){
         for( Block * tmp = bm.GetBlockHead(file ); !tmp->IsEnd() ; tmp = bm.GetNextBlock(file , tmp ) ){
-            if(  )
+            if( tmp->GetUsingSize() + t.GetLength() + 1 > BLOCK_SIZE && tmp->GetUsingSize() != BLOCK_SIZE ){
+                tmp->SetUsingSize(BLOCK_SIZE);
+            }else{
+                offset = tmp->GetUsingSize();
+                OffsetNum = tmp->GetBlockOffsetNum();
+                tmp->write( offset , data.c_str() , data.size() );
+                tmp->SetUsingSize( offset + data.size() ); 
+            }
         }
     }else{
         RecordFreeList now = file->freelist;
         file->freelist = file->freelist->next;
         now->next = NULL ;
-        Block * tmp = bm.GetBlockByNum(file , now->BlockNum);
-        string data = '\0';
-        for( int i = 0 ; i < tuple.getData().size(); i++ ){
-            data += Data2String(tuple.getData()[i]);
-        }
-        tmp->write( now->offset , data.c_str() , data.size() ); 
+        OffsetNum = now->BlockNum;
+        offset = now->offset;
         delete now;
+        Block * tmp = bm.GetBlockByNum(file , OffsetNum);
+        tmp->write( offset , data.c_str() , data.size() ); 
+    }
+    for( int i = 0 ; i < t.attr_.num; i ++ ){
+        if( t.attr_.has_index[i] ){
+            string tmp = Data2String( tuple.getData()[i] );
+            string KeyType;
+            if( t.attr_.type[i] == -1) KeyType = "int";
+            else if ( t.attr_.type[i] == 0 ) KeyType = "float";
+            else KeyType = "string"; 
+            im.Insert_Into_Index( t.attr_.index_name[i] ,tmp,  KeyType , OffsetNum , offset );
+        }
+    }
+}
+void RecordManager :: CreateIndex( Table &t , string AttrName , string index_name  ){
+    int index = t.AttrName2Index[AttrName];
+    int KeySize = t.attr_.type[index] < 1 ? 4 : t.attr_.type[index];
+    string KeyType;
+    if( t.attr_.type[index] == -1) KeyType = "int";
+    else if ( t.attr_.type[index] == 0 ) KeyType = "float";
+    else KeyType = "string"; 
+    im.Create_Index( index_name ,KeySize , KeyType);
+    File * file = bm.GetFile( t.getTitle() , 0);
+    int offset = 1;
+    for(int i = 0 ; i < index ; i ++ ){
+        offset += t.attr_.type[i] < 1 ? 4 : t.attr_.type[i];
+    } 
+    int KeySize = t.attr_.type[index] < 1 ? 4 : t.attr_.type[index];
+    int RecordSize = t.GetLength();
+    for( Block * tmp = bm.GetBlockHead(file) ;tmp ; tmp = bm.GetNextBlock( file , tmp)){
+        char* data = tmp->GetContent();
+        for(int i = 0 ; i + RecordSize < BLOCK_SIZE ; i += RecordSize + 1){
+            if( *(data+i) == 1 ) continue;
+            string KeyValue( data + i + 1 , KeySize);
+            im.Insert_Into_Index( index_name , KeyValue , KeyType , tmp->GetBlockOffsetNum() , i);
+        }
     }
 }
