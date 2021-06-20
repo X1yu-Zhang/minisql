@@ -5,7 +5,6 @@
 #include <sstream>
 using namespace std;
 
-//用于where的判断 分别为小于，小于等于，等于，大于等于，大于，不等于
 typedef enum {
     LESS,
     LESS_OR_EQUAL,
@@ -15,53 +14,49 @@ typedef enum {
     NOT_EQUAL
 } WHERE;
 
-//一个struct存放它的一条信息的类型和值
-//用一个strunt嵌套一个union实现多种类型的转换
-//type的类型：-1：int,0:float,1-255:string(数值为字符串的长度+1)
+
 struct Data {
-    int type;
+    int type; // -1 for int , 0 for float , 1 - 255 for the length of string
     int datai;
     float dataf;
     std::string datas;
 };
 
-//Where存放一组判断语句
+//Where???????锟斤拷????
 struct Where {
-    Data data; //数据
-    WHERE relation_character;   //关系
+    Data data; //????
+    WHERE relation_character;   //???
 };
 
 struct Index {
-    int num;  //index的总数
-    short location[10];  //第i个index建立在第location[i]个attribute上
-    string indexname[10];  //每个index的名字
+    int num;  //index??????
+    short location[10];  //??i??index???????location[i]??attribute??
+    string indexname[10];  //???index??????
 };
 
 struct Attribute {
-    int num;  //存放table的属性数
-    string name[32];  //存放每个属性的名字
+    int num;  //???table????????
+    string name[32];  //???????????????
     string index_name[32];
-    short type[32];  //存放每个属性的类型，-1：int,0:float,1~255:string的长度+1
-    bool unique[32];  //判断每个属性是否unique，是为true
-    short primary_key;  //判断是否存在主键,-1为不存在，其他则为主键的所在位置
-    bool has_index[32]; //判断是否存在索引
+    unsigned short type[32];  //????????????????-1??int,0:float,1~255:string?????+1
+    bool unique[32];  //?锟斤拷???????????unique?????true
+    short primary_key;  //?锟斤拷???????????,-1?????????????????????????锟斤拷??
+    bool has_index[32]; //?锟斤拷???????????
 };
 
 class Tuple {
 private:
-    vector<Data> data_;  //存储元组里的每个数据的信息
+    vector<Data> data_;  //?锟斤拷?????????????????
 public:
     Tuple();
-    Tuple(const Tuple& tuple_in);  //拷贝元组
-    void addData(Data data_in);  //新增元组
-    vector<Data> getData() const;  //返回数据
-    int getSize();  //返回元组的数据数量
-    bool isDeleted();
-    void setDeleted();
-    void showTuple();  //显示元组中的所有数据
+    Tuple(const Tuple& tuple_in);  //???????
+    void addData(Data data_in);  //???????
+    vector<Data> getData() const;  //????????
+    int getSize();  //????????????????
+    void showTuple();  //???????锟斤拷?????????
 };
 
-//返回数据长度
+//???????????
 template <typename T>
 int getDataLength(T data) {
     stringstream stream;
@@ -69,7 +64,7 @@ int getDataLength(T data) {
     return stream.str().length();
 }
 
-//返回a,b关系的判断
+//????a,b??????锟斤拷?
 template <typename T>
 bool isSatisfied(T a, T b, WHERE relation) {
     switch (relation) {
@@ -112,7 +107,7 @@ bool isSatisfied(T a, T b, WHERE relation) {
     }
 }
 
-//将数据转化为字符串
+//???????????????
 template <typename T>
 void copyString(char* p, int& offset, T data) {
     stringstream sStream;

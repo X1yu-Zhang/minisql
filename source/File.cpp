@@ -41,3 +41,15 @@ void File :: ShowFreeList(){
         now = now->next;
     }
 }
+void File :: AppendFreeList( int OffsetNum , int Offset ){
+    RecordFreeList node = new FreeListNode;
+    node->BlockNum = OffsetNum;
+    node->offset = Offset;
+    node->next = NULL ;
+    if ( freelist == NULL ){
+        freelist = node;
+    }else {
+        node->next = freelist;
+        freelist = node;
+    }
+}

@@ -22,6 +22,9 @@ void Block :: SetPin(){
 void Block :: ClearPin(){
     pin = false;
 }
+bool Block :: IsEnd(){
+    return end;
+}
 void Block :: SetDirty(){
     dirty = true;
 }
@@ -62,11 +65,8 @@ void Block :: write(int offset, const char * data, int length){
     memcpy( this->data+offset , data, length);
     SetDirty();
 }
-char * Block :: FetchRecord( int index , int size ){
-    char * ret = new char[size];
-    int offset = index * ( size + 1 );
-    memcpy(ret , data + offset , size);
-    return ret;
+int Block :: GetBlockOffsetNum(){
+    return offsetNum;
 }
 char * Block :: GetContent(){
     return this->data;

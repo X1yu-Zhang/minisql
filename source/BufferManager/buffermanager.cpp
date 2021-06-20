@@ -29,6 +29,7 @@ BufferManager :: ~BufferManager(){
     for(File * tmp = FileHead ; tmp ; tmp = next){
         next = tmp->next;
         CloseFile(tmp);
+        delete tmp;
     }
 }
 
@@ -173,7 +174,6 @@ void BufferManager :: CloseFile( File * file, bool Delete = false ){
 	file->filename = "";
 	file->next = NULL;
 	file->pre = NULL;
-	delete file;
 }
 void BufferManager :: DeleteFileFromList( string  filename ){
     if( FileHead == NULL )return ;
@@ -188,27 +188,15 @@ void BufferManager :: DeleteFileFromList( string  filename ){
                 FileHead = tmp->next;
             }
             CloseFile(tmp);
+            delete tmp;
             return ;
         }
     }
 }
-
-bool BufferManager :: DeleteRecord( Block * b, int offset ){
-    char tmp = 1;
-    if ( b->data[offset] == 1 ){
-        return false;
-    }
-    b->write(offset , &tmp , 1);
-    File * file = b->file;
-    RecordFreeList now = new FreeListNode;
-    now->next = NULL;
-    now->BlockNum = b->offsetNum;
-    now->offset = offset;
-    if ( file->freelist == NULL )
-        file->freelist = now;
-    else{
-        now->next = file->freelist;
-        file->freelist = now;
-    }
-    return true;
+void BufferManager :: ClearTable( File * file ){
+    CloseFile( file , true );
+    fstream f1("../data/record/"+file->filename+"_FreeList.db", ios :: out );
+    fstream f2("../data/record/"+file->filename+".db" , ios :: out );
+    f1.close();
+    f2.close();
 }

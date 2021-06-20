@@ -23,7 +23,7 @@ public:
     Block * GetBlock( File * file, Block * position );
     Block * GetIndexBlock( File * file );
     Block * GetReplaceBlock();
-    bool DeleteRecord( Block * b, int offset );
+    void ClearTable( File * file );
     void DeleteFileFromList( string filename );
     void CloseFile( File * file, bool Delete = false );
     void ShowInfo(Block * tmp);

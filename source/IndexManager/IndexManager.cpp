@@ -12,12 +12,14 @@ IndexManager::IndexManager(){
 }
 
 IndexManager::~IndexManager(){  //done Block的调用也许会有问题 index的存储可能会有问题
-    for(int i=0;i<IndexSet.size();i++){
-        File* temp_file=buffer->GetFile(IndexSet[i].IndexName,1);//获取index文件指针
+    map<string,Index>::iterator iter;
+    for(iter = IndexSet.begin(); iter != IndexSet.end(); iter++){
+        Index temp_index=iter->second;
+        File* temp_file=buffer->GetFile(temp_index.IndexName,1);//获取index文件指针
         Block* temp_Block=buffer->GetIndexBlock(temp_file);//获得用于写入的一个块
-        int KeySize=IndexSet[i].KeySize;
-        if(IndexSet[i].KeyType=="int"){
-            Node<int>* temp_node=IndexSet[i].Int_Root;
+        int KeySize=temp_index.KeySize;
+        if(temp_index.KeyType=="int"){
+            Node<int>* temp_node=temp_index.Int_Root;
             while(temp_node->isLeaf!=1){
                 temp_node=temp_node->childs[0];
             }//找到第一个叶子结点
@@ -30,8 +32,8 @@ IndexManager::~IndexManager(){  //done Block的调用也许会有问题 index的
                 temp_Block=buffer->GetIndexBlock(temp_file);
                 temp_node=temp_node->next;//到下一个node去，同时更换block
             }
-        }else if(IndexSet[i].KeyType=="float"){
-            Node<float>* temp_node=IndexSet[i].Float_Root;
+        }else if(temp_index.KeyType=="float"){
+            Node<float>* temp_node=temp_index.Float_Root;
             while(temp_node->isLeaf!=1){
                 temp_node=temp_node->childs[0];
             }//找到第一个叶子结点
@@ -44,8 +46,8 @@ IndexManager::~IndexManager(){  //done Block的调用也许会有问题 index的
                 temp_Block=buffer->GetIndexBlock(temp_file);
                 temp_node=temp_node->next;//到下一个node去，同时更换block
             }
-        }else if(IndexSet[i].KeyType=="string"){
-            Node<string>* temp_node=IndexSet[i].String_Root;
+        }else if(temp_index.KeyType=="string"){
+            Node<string>* temp_node=temp_index.String_Root;
             while(temp_node->isLeaf!=1){
                 temp_node=temp_node->childs[0];
             }//找到第一个叶子结点
@@ -62,7 +64,8 @@ IndexManager::~IndexManager(){  //done Block的调用也许会有问题 index的
     }
 }
 
-bool IndexManager:: Build_BplusTree_From_File(File * Index_File, string KeyType,int KeySize,string IndexName){
+bool IndexManager:: Build_BplusTree_From_File( string KeyType,int KeySize,string IndexName){
+    File *Index_File=buffer->GetFile(IndexName,1);//将文件连上链表并获得指针
     int degree=Block_Size/(sizeof(Node<int>*)+2*sizeof(int)+KeySize);
     Index* temp_index=new Index;
     temp_index->IndexName=IndexName;
@@ -72,9 +75,15 @@ bool IndexManager:: Build_BplusTree_From_File(File * Index_File, string KeyType,
     temp_index->Float_Root=NULL;
     temp_index->String_Root=NULL;
     temp_index->degree=Block_Size/(sizeof(Node<int>*)+2*sizeof(int)+KeySize);
-    IndexSet.push_back(*temp_index);
+    IndexSet[IndexName]=*temp_index;
 
     if(KeyType=="int"){
+        temp_index->Int_Root=new Node<int>;
+        temp_index->Int_Root->degree=temp_index->degree;
+        temp_index->Int_Root->isLeaf=1;
+        temp_index->Int_Root->parent=NULL;
+        temp_index->Int_Root->pre=NULL;
+        temp_index->Int_Root->next=NULL;
         Block* temp_block=Index_File->head;//第一个block
         while(temp_block){
             string content=temp_block->GetContent();//返回4096长的char数组，但string长度不一定为4096
@@ -87,6 +96,12 @@ bool IndexManager:: Build_BplusTree_From_File(File * Index_File, string KeyType,
             temp_block=buffer->GetNextBlock( Index_File , temp_block);
         }
     }else if(KeyType=="float"){
+        temp_index->Float_Root=new Node<float>;
+        temp_index->Float_Root->degree=temp_index->degree;
+        temp_index->Float_Root->isLeaf=1;
+        temp_index->Float_Root->parent=NULL;
+        temp_index->Float_Root->pre=NULL;
+        temp_index->Float_Root->next=NULL;
         Block* temp_block=Index_File->head;//第一个block
         while(temp_block){
             string content=temp_block->GetContent();//返回4096长的char数组，但string长度不一定为4096
@@ -99,6 +114,12 @@ bool IndexManager:: Build_BplusTree_From_File(File * Index_File, string KeyType,
             temp_block=buffer->GetNextBlock( Index_File , temp_block);
         }
     }else if(KeyType=="string"){
+        temp_index->String_Root=new Node<string>;
+        temp_index->String_Root->degree=temp_index->degree;
+        temp_index->String_Root->isLeaf=1;
+        temp_index->String_Root->parent=NULL;
+        temp_index->String_Root->pre=NULL;
+        temp_index->String_Root->next=NULL;
         Block* temp_block=Index_File->head;//第一个block
         while(temp_block){
             string content=temp_block->GetContent();//返回4096长的char数组，但string长度不一定为4096
@@ -118,9 +139,8 @@ bool IndexManager:: Build_BplusTree_From_File(File * Index_File, string KeyType,
 
 
 bool IndexManager::Create_Index(string IndexName,int KeySize,string KeyType){//done
-    for(int i=0;i<IndexSet.size();i++){
-        if(IndexSet[i].IndexName==IndexName)return false;//若该IndexName已经存在，则创建失败
-    }
+    if (IndexSet.find(IndexName) == IndexSet.end())return false;//不存在这个Index
+    File* index_file=buffer->GetFile(IndexName,1);
     Index *temp_index=new Index;
     temp_index->IndexName=IndexName;
     temp_index->KeySize=KeySize;
@@ -132,83 +152,81 @@ bool IndexManager::Create_Index(string IndexName,int KeySize,string KeyType){//d
         temp_index->Int_Root=new Node<int>;
         temp_index->Int_Root->degree=Block_Size/(sizeof(Node<int>*)+2*sizeof(int)+KeySize);
         temp_index->Int_Root->isLeaf=1;
-        temp_index->Int_Root->parent=NULL;//可用于判断是否是根节点
+        temp_index->Int_Root->parent=NULL;
+        temp_index->Int_Root->pre=NULL;
+        temp_index->Int_Root->next=NULL;
     }else if(KeyType=="float"){
         temp_index->Float_Root=new Node<float>;
         temp_index->Float_Root->degree=Block_Size/(sizeof(Node<int>*)+2*sizeof(int)+KeySize);
         temp_index->Float_Root->isLeaf=1;
-        temp_index->Float_Root->parent=NULL;//可用于判断是否是根节点
+        temp_index->Float_Root->parent=NULL;
+        temp_index->Float_Root->pre=NULL;
+        temp_index->Float_Root->next=NULL;
     }else if(KeyType=="string"){
         temp_index->String_Root=new Node<string>;
         temp_index->String_Root->degree=Block_Size/(sizeof(Node<int>*)+2*sizeof(int)+KeySize);
         temp_index->String_Root->isLeaf=1;
-        temp_index->String_Root->parent=NULL;//可用于判断是否是根节点
+        temp_index->String_Root->parent=NULL;
+        temp_index->String_Root->pre=NULL;
+        temp_index->String_Root->next=NULL;
     }
     temp_index->degree=Block_Size/(sizeof(Node<int>*)+2*sizeof(int)+KeySize);
-    IndexSet.push_back(*temp_index);
+    IndexSet[IndexName]=*temp_index;
     return true;
 }
 
 bool IndexManager::Insert_Into_Index(string IndexName,string KeyValue,string KeyType,int block_offset,int offset_in_block){
-    for(int i=0;i<IndexSet.size();i++){
-        if(IndexName==IndexSet[i].IndexName){
-            if(KeyType=="int"){
-                IndexSet[i].Int_Root=IndexSet[i].Int_Root->Node_Insert(*(int*)(&KeyValue),block_offset,offset_in_block);
-                return true;
-            }else if(KeyType=="float"){
-                IndexSet[i].Float_Root=IndexSet[i].Float_Root->Node_Insert(*(float*)(&KeyValue),block_offset,offset_in_block);
-                return true;
-            }else if(KeyType=="string"){
-                IndexSet[i].String_Root=IndexSet[i].String_Root->Node_Insert(KeyValue,block_offset,offset_in_block);
-                return true;
-            }
-        }
+    if (IndexSet.find(IndexName) == IndexSet.end())return false;//不存在这个Index
+    if(KeyType=="int"){
+        IndexSet[IndexName].Int_Root=IndexSet[IndexName].Int_Root->Node_Insert(*(int*)(&KeyValue),block_offset,offset_in_block);
+        return true;
+    }else if(KeyType=="float"){
+        IndexSet[IndexName].Float_Root=IndexSet[IndexName].Float_Root->Node_Insert(*(float*)(&KeyValue),block_offset,offset_in_block);
+        return true;
+    }else if(KeyType=="string"){
+        IndexSet[IndexName].String_Root=IndexSet[IndexName].String_Root->Node_Insert(KeyValue,block_offset,offset_in_block);
+        return true;
     }
     return false;
 }
 
-Search_Info* IndexManager::Search_in_Index(string IndexName,string KeyValue){
-    for(int i=0;i<IndexSet.size();i++){
-        if(IndexName==IndexSet[i].IndexName){
-            if(IndexSet[i].KeyType=="int"){
-                return IndexSet[i].Int_Root->Node_Search(*(int*)(&KeyValue));
-            }else if(IndexSet[i].KeyType=="float"){
-                return IndexSet[i].Float_Root->Node_Search(*(float*)(&KeyValue));
-            }else if(IndexSet[i].KeyType=="string"){
-                return IndexSet[i].String_Root->Node_Search(KeyValue);
-            }
+vector<Search_Info> IndexManager::Search_In_Index(string IndexName, Where query) {
+    vector<Search_Info> result;
+    if (IndexSet.find(IndexName) != IndexSet.end()){
+        if(IndexSet[IndexName].KeyType=="int"){
+            return IndexSet[IndexName].Int_Root->Node_Search(query);
+        }else if(IndexSet[IndexName].KeyType=="float"){
+            return IndexSet[IndexName].Float_Root->Node_Search(query);
+        }else if(IndexSet[IndexName].KeyType=="string"){
+            return IndexSet[IndexName].String_Root->Node_Search(query);
         }
     }
-    return NULL;
+    return result;
 }
+
 
 bool IndexManager::Delete_From_Index(string IndexName,string KeyValue) {
-    for(int i=0;i<IndexSet.size();i++){
-        if(IndexName==IndexSet[i].IndexName){
-            if(IndexSet[i].KeyType=="int"){
-                IndexSet[i].Int_Root=IndexSet[i].Int_Root->Node_Delete(*(int*)(&KeyValue));
-                return true;
-            }else if(IndexSet[i].KeyType=="float"){
-                IndexSet[i].Float_Root=IndexSet[i].Float_Root->Node_Delete(*(float*)(&KeyValue));
-                return true;
-            }else if(IndexSet[i].KeyType=="string"){
-                IndexSet[i].String_Root=IndexSet[i].String_Root->Node_Delete(KeyValue);
-                return true;
-            }
-        }
+    if (IndexSet.find(IndexName) != IndexSet.end())return false;;
+    if(IndexSet[IndexName].KeyType=="int"){
+        IndexSet[IndexName].Int_Root=IndexSet[IndexName].Int_Root->Node_Delete(*(int*)(&KeyValue));
+        return true;
+    }else if(IndexSet[IndexName].KeyType=="float"){
+        IndexSet[IndexName].Float_Root=IndexSet[IndexName].Float_Root->Node_Delete(*(float*)(&KeyValue));
+        return true;
+    }else if(IndexSet[IndexName].KeyType=="string"){
+        IndexSet[IndexName].String_Root=IndexSet[IndexName].String_Root->Node_Delete(KeyValue);
+        return true;
     }
-    return false;
 }
 
 bool IndexManager::Drop_Index(string IndexName){
-    for(int i=0;i<IndexSet.size();i++){
-        if(IndexName==IndexSet[i].IndexName){
-            IndexSet.erase(IndexSet.begin()+i);//删除该元素，但我不确定这里是否要进行内存操作
-            return true;
-        }
-    }
-    return false;
+    if (IndexSet.find(IndexName) != IndexSet.end())return false;;
+    IndexSet.erase(IndexName);//删除key为IndexName的元素
+    buffer->DeleteFileFromList(IndexName );
+    return true;
 }
+
+
 
 
 

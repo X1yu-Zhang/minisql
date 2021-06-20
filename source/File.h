@@ -26,6 +26,7 @@ public:
     bool ReadFreeList();
     void WriteFreeList();
     void ShowFreeList();
+    void AppendFreeList( int offsetNum , int offset );
 };
 
 #endif
