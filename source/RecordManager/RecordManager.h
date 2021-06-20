@@ -2,6 +2,7 @@
 #define _RECORDMANAGER_H_
 #include "../BufferManager/buffermanager.h"
 #include "../IndexManager/IndexManager.h"
+#include <iomanip>
 #include "../tuple.h"
 #include "../table.h"
 class RecordManager {
@@ -16,6 +17,7 @@ public:
     bool RecordConditionFit(Tuple &t , vector < int > &AttributeName ,vector<Where>& where);
     vector <Tuple> SelectRecord( Table &t, vector < string > &AttributeName ,vector<Where>& where );
     bool CheckUnique( Table & t , Tuple & tuple );
-    void RecordManager :: CreateIndex( Table &t , string AttrName , string index_name  );
+    void CreateIndex( Table &t , string AttrName , string index_name  );
+    void ShowTuple( vector <Tuple> tuples , Table & t);
 };
 #endif

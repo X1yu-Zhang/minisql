@@ -3,6 +3,7 @@
 vector<Tuple> RecordManager :: SelectWithIndex( Table &t ,File * file , string Index_name , Where where){
     vector <Tuple> ret;
     vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where );
+    if( Fetch.size() == 0 ) return ret;
     int size = t.GetLength();
     for( int i = 0 ; i < Fetch.size() ; i ++ ){
         Tuple tp;
@@ -138,25 +139,27 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
             break;
         }
     }
-    int cnt = 0;
-    vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where[SearchIndex] );
     File * file = bm.GetFile( t.getTitle() , 0 ); 
-    if ( Fetch.size() ){
-        for( int i = 0 ;i < Fetch.size() ; i++ ){
-            Block * tmp = bm.GetBlockByNum( file , Fetch[i].Block_Offset );
-            Tuple tempTuple = ConverseIntoTuple(tmp->GetContent() + 1, &t.attr_ );
-            if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
-                for( int i = 0 ; i < t.attr_.num; i ++ ){
-                    if( t.attr_.has_index[i] ){
-                        string tmp = Data2String( tempTuple.getData()[i] );
-                        im.Delete_From_Index( t.attr_.index_name[i], tmp );
+    int cnt = 0;
+    if( SearchIndex != -1 ){
+        vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where[SearchIndex] );
+        if ( Fetch.size() ){
+            for( int i = 0 ;i < Fetch.size() ; i++ ){
+                Block * tmp = bm.GetBlockByNum( file , Fetch[i].Block_Offset );
+                Tuple tempTuple = ConverseIntoTuple(tmp->GetContent() + 1, &t.attr_ );
+                if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
+                    for( int i = 0 ; i < t.attr_.num; i ++ ){
+                        if( t.attr_.has_index[i] ){
+                            string tmp = Data2String( tempTuple.getData()[i] );
+                            im.Delete_From_Index( t.attr_.index_name[i], tmp );
+                        }
                     }
+                    char DeletedFlag = 1;
+                    tmp->write( Fetch[i].Offset_in_Block , &DeletedFlag , 1 );
+                    RecordFreeList node = new FreeListNode;
+                    file->AppendFreeList( Fetch[i].Block_Offset , Fetch[i].Offset_in_Block );
+                    cnt ++ ;
                 }
-                char DeletedFlag = 1;
-                tmp->write( Fetch[i].Offset_in_Block , &DeletedFlag , 1 );
-                RecordFreeList node = new FreeListNode;
-                file->AppendFreeList( Fetch[i].Block_Offset , Fetch[i].Offset_in_Block );
-                cnt ++ ;
             }
         }
     }else{
@@ -264,5 +267,25 @@ void RecordManager :: CreateIndex( Table &t , string AttrName , string index_nam
             string KeyValue( data + i + 1 , KeySize);
             im.Insert_Into_Index( index_name , KeyValue , KeyType , tmp->GetBlockOffsetNum() , i);
         }
+    }
+}
+ostream & operator << ( ostream & out , Data tmp ){
+    if( tmp.type == -1 ) out << tmp.datai;
+    else if( tmp.type == 0 ) out << tmp.dataf;
+    else out << tmp.datas;
+    return out;
+}
+void RecordManager :: ShowTuple( vector <Tuple> tuples , Table & t){
+    for(int i = 0 ; i < t.attr_.num ; i ++ ){
+        int length = t.attr_.type[i] < 1 ? 10 : t.attr_.type[i] ;
+        cout << "|" << *right << setw(length) << t.attr_.name[i];
+    }
+    cout << "|" << endl;
+    for(int i = 0; i < tuples.size() ; i++ ){
+        for(int j = 0 ; j < tuples[i].getData().size() ; j ++ ){
+            int length = t.attr_.type[i] < 1 ? 10 : t.attr_.type[i];
+            cout << "|" << *right << setw(length) << tuples[i].getData()[j]; 
+        }
+        cout << "|" << endl;
     }
 }
