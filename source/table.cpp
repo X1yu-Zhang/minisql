@@ -10,28 +10,9 @@ Table::Table(const Table& table_in) {
     this->attr_ = table_in.attr_;
     this->index_ = table_in.index_;
     this->title_ = table_in.title_;
-    for (int index = 0; index < tuple_.size(); index++)
-        this->tuple_.push_back(table_in.tuple_[index]);
 }
 
 //����Ԫ��
- int Table::addTuple(Tuple tuple_in){
-     if(tuple_in.getSize()!=attr_.num)
-    {
-         cout<<"Illegal Tuple Insert: The size of column is unequal."<<endl;
-         return 0;
-     }
-     for(int index=0;index<attr_.num;index++){
-        //�������tuple��typeΪint����floatʱ���������Ӧ��attr_.type��ͬ�����Ϊstring�Ļ�������Ҫ������attr_.type
-        if(tuple_in.getData()[index].type>attr_.type[index]||(tuple_in.getData()[index].type<=0&&tuple_in.getData()[index].type!=attr_.type[index]))
-         {
-             cout<<"Illegal Tuple Insert: The types of attributes are unequal."<<endl;
-             return 0;
-        }
-     }
-     tuple_.push_back(tuple_in);
-     return 1;
- }
 
 //��������
 int Table::setIndex(short index, string index_name) {
@@ -75,9 +56,7 @@ string Table::getTitle() {
 Attribute Table::getAttr() {
     return attr_;
 }
-vector<Tuple>& Table::getTuple() {
-    return tuple_;
-}
+
 Index Table::getIndex() {
     return index_;
 }
@@ -85,21 +64,7 @@ Index Table::getIndex() {
 short Table::gethasKey(){
     return attr_.primary_key;
 }
-void Table::showTable() {
-    for (int index = 0; index < attr_.num; index++)
-        cout << attr_.name[index] << '\t';
-    cout << endl;
-    for (int index = 0; index < tuple_.size(); index++)
-        tuple_[index].showTuple();
-}
 
-void Table::showTable(int limit) {
-    for (int index = 0; index < attr_.num; index++)
-        cout << attr_.name[index] << '\t';
-    cout << endl;
-    for (int index = 0; index < limit && index < tuple_.size(); index++)
-        tuple_[index].showTuple();
-}
 int Table :: HasAttribute( string AttributeName ){
     for ( int i = 0 ; i < attr_.num ; i ++ ){
         if( attr_.name[i] == AttributeName ){
@@ -125,6 +90,7 @@ istream& operator>>( istream & in , Table & t){
         if ( t.attr_.has_index[i] ) in >> t.attr_.index_name[i];
     }
     t.ConstructMap();
+    return in;
 }
 
 ostream& operator<<( ostream & out , const Table & t){
@@ -135,6 +101,7 @@ ostream& operator<<( ostream & out , const Table & t){
         if ( t.attr_.has_index[i] ) out << t.attr_.index_name[i];
         out << endl;
     }
+    return out;
 }
 
 void Table :: ConstructMap(){
@@ -143,8 +110,8 @@ void Table :: ConstructMap(){
     }
 }
 
-vector<int >& Table :: ConvertIntoIndex( const vector<string> AttrName ){
-    vector<int>ret(AttrName.size());
+vector<int > Table :: ConvertIntoIndex( const vector<string> AttrName ){
+    vector<int> ret(AttrName.size());
     for(int i = 0;i < AttrName.size() ; i++ ){
         ret[i] = AttrName2Index[AttrName[i]];
     }

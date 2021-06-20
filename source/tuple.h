@@ -2,6 +2,7 @@
 #define TUPLE_H
 #include <vector>
 #include <iostream>
+#include <sstream>
 using namespace std;
 
 //用于where的判断 分别为小于，小于等于，等于，大于等于，大于，不等于
@@ -114,9 +115,9 @@ bool isSatisfied(T a, T b, WHERE relation) {
 //将数据转化为字符串
 template <typename T>
 void copyString(char* p, int& offset, T data) {
-    stringstream stream;
-    stream << data;
-    string s1 = stream.str();
+    stringstream sStream;
+    sStream << data;
+    string s1 = sStream.str();
     for (int i = 0; i < s1.length(); i++, offset++)
         p[offset] = s1[i];
 }

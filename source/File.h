@@ -1,6 +1,7 @@
 #ifndef _FILE_H_
 #define _FILE_H_
 #include <string>
+#include <fstream>
 using namespace std;
 #include "Block.h"
 struct RecordFreeListNode{
