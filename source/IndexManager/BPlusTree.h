@@ -4,8 +4,8 @@
 
 #ifndef FOCUS_INDEXMANAGER_BPLUSTREE_H
 #define FOCUS_INDEXMANAGER_BPLUSTREE_H
-#include <vector>
-#include "../tuple.h"
+#include<vector>
+#include"tuple.h"
 using namespace std;
 
 template <class KeyType>
@@ -30,10 +30,14 @@ public:
     Node* next;
     vector<Node<KeyType>*> childs;
     vector<Index_Info<KeyType>> Info;
-
-    Node* Node_Insert(KeyType KeyValue,int Block_Offset,int Offset_in_Block);
-    vector<Search_Info> Node_Search(Where query);//找不到就return NULL
-    Node* Node_Delete(KeyType KeyValue);
 };
 
+template<class KeyType>
+bool Node_Insert(Node<KeyType>* Tree,KeyType KeyValue,int Block_Offset,int Offset_in_Block);
+
+template<class KeyType>
+vector<Search_Info> Node_Search(Node<KeyType>* Tree,Where query);//找不到就return NULL
+
+template<class KeyType>
+bool Node_Delete(Node<KeyType>*Node,KeyType KeyValue);
 #endif //FOCUS_INDEXMANAGER_BPLUSTREE_H
