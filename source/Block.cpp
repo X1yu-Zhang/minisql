@@ -32,13 +32,17 @@ void Block :: ClearDirty(){
     dirty = false;
 }
 void Block :: SetClock(){
-    time = clock()*1.0 / 1000 ;
+    time ++ ;
 }
 void Block :: ReadIn(){
     string filename = this->filename;
     string filetype = ( this->file->type?"index" : "record");
-    string fpath = "../data/"+filetype+"/"+filename+".db";
+    string fpath = "./data/"+filetype+"/"+filename+".db";
 	fstream file(fpath, ios::in | ios::out | ios :: binary);
+    if ( !file.is_open() ){
+        this->end = true;
+        return ;
+    }
     int offset = this->offsetNum * BLOCK_SIZE;	
 	file.seekp(offset, ios::beg);		
     if( this->data == NULL )		
@@ -54,7 +58,7 @@ int Block:: GetUsingSize(){
 void Block :: WriteBack(){
     string filename = this->filename;
     string filetype = ( this->file->type?"index" : "record" );
-    string fpath = "../data/"+filetype+"/"+filename+".db";
+    string fpath = "./data/"+filetype+"/"+filename+".db";
 	fstream file(fpath, ios::in | ios::out | ios :: binary);
     int offset = this->offsetNum * BLOCK_SIZE;		
 	file.seekp(offset, ios::beg);	
@@ -74,3 +78,12 @@ int Block :: GetBlockOffsetNum(){
 char * Block :: GetContent(){
     return this->data;
 }
+void Block :: SetNext( Block * next ){
+    this->next = next;
+}
+void Block :: SetOffsetNum( int num ){
+    this->offsetNum = num;
+}
+void Block :: SetEnd( bool end ){
+    this->end = end;
+} 

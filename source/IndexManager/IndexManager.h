@@ -4,14 +4,13 @@
 
 #ifndef FOCUS_INDEXMANAGER_INDEXMANAGER_H
 #define FOCUS_INDEXMANAGER_INDEXMANAGER_H
-#include<vector>
-#include"File.h"
+#include <vector>
+#include "../File.h"
 #include "BPlusTree.h"
-#include"buffermanager.h"
-#include"tuple.h"
+#include "../BufferManager/buffermanager.h"
+#include "../tuple.h"
 #include <map>
 using namespace std;
-extern BufferManager* buffer;//全局的一个buffer管理器
 
 class Index{
 public:
@@ -27,8 +26,8 @@ public:
 class IndexManager{
 public:
     map<string,Index> IndexSet;//保存所有已经从文件中建好树的Index
-
-    IndexManager();
+    BufferManager & bm;
+    IndexManager( BufferManager & bm_):bm(bm_){};
     ~IndexManager();//析构时把B+树叶子结点写回
     bool Build_BplusTree_From_File( string KeyType,int KeySize,string IndexName);
     //需要给出文件指针，Index会加入到IndexSet中，用于查找、删除等使用 成功返回True 否则返回False

@@ -4,8 +4,8 @@
 
 #ifndef FOCUS_INDEXMANAGER_BPLUSTREE_H
 #define FOCUS_INDEXMANAGER_BPLUSTREE_H
-#include<vector>
-#include"tuple.h"
+#include <vector>
+#include "../tuple.h"
 using namespace std;
 
 template <class KeyType>

@@ -1,25 +1,5 @@
 #include "RecordManager.h"
 
-vector<Tuple> RecordManager :: SelectWithIndex( Table &t ,File * file , string Index_name , Where where){
-    vector <Tuple> ret;
-    vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where );
-    if( Fetch.size() == 0 ) return ret;
-    int size = t.GetLength();
-    for( int i = 0 ; i < Fetch.size() ; i ++ ){
-        Tuple tp;
-        Block * tmp = bm.GetBlockByNum(file , Fetch[i].Block_Offset);
-        char * data = tmp->GetContent();
-        data += Fetch[i].Offset_in_Block;
-        if( *data == 0 ){
-            for( int i = 0; i < t.attr_.num ; i ++  ){
-                tp.addData( ConverseIntoData( data ,t.attr_.type[i] ) );
-                data += ( t.attr_.type[i] < 1 ) ?  4 : t.attr_.type[i];
-            }
-            ret.push_back(tp);
-        }
-    }
-    return ret;
-}
 Data ConverseIntoData( char * data, int type ){ 
     Data ret;
     ret.type = type;
@@ -33,6 +13,48 @@ Data ConverseIntoData( char * data, int type ){
     }
     return ret;
 }
+Tuple ConverseIntoTuple( char * data , Attribute * attr ){
+    Tuple ret;
+    for(int i = 0 ; i < attr->num ; i ++ ){
+        ret.addData( ConverseIntoData( data , attr->type[i] ) );
+        data += attr->type[i] < 1 ? 4 : attr->type[i];
+    }
+    return ret;
+}
+string Data2String( Data d ){
+    if ( d.type < 0){
+        string ret( (char*) (&d.datai) , 4);
+        return ret;
+    }else if( d.type == 0 ){
+        string ret( (char*) (&d.dataf) , 4);
+        return ret;
+    }else {
+        string ret = d.datas;
+        ret.resize( d.type );
+        return ret;
+    }
+    return "";
+}
+// vector<Tuple> RecordManager :: SelectWithIndex( Table &t ,File * file , string Index_name , Where where){
+//     vector <Tuple> ret;
+//     vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where );
+//     if( Fetch.size() == 0 ) return ret;
+//     int size = t.GetLength();
+//     for( int i = 0 ; i < Fetch.size() ; i ++ ){
+//         Tuple tp;
+//         Block * tmp = bm.GetBlockByNum(file , Fetch[i].Block_Offset);
+//         char * data = tmp->GetContent();
+//         data += Fetch[i].Offset_in_Block;
+//         if( *data == 0 ){
+//             for( int i = 0; i < t.attr_.num ; i ++  ){
+//                 tp.addData( ConverseIntoData( data ,t.attr_.type[i] ) );
+//                 data += ( t.attr_.type[i] < 1 ) ?  4 : t.attr_.type[i];
+//             }
+//             ret.push_back(tp);
+//         }
+//     }
+//     return ret;
+// }
 bool  RecordManager :: RecordConditionFit(Tuple &t , vector < int > &AttributeName ,vector<Where> &where){
     vector < Data > D = t.getData();
     bool ret = true;
@@ -86,113 +108,111 @@ bool  RecordManager :: RecordConditionFit(Tuple &t , vector < int > &AttributeNa
     } 
     return ret;
 }
-vector<Tuple> RecordManager :: SelectRecord( Table &t, vector < string > &AttributeName ,vector<Where> &where ){
+// vector<Tuple> RecordManager :: SelectRecord( Table &t, vector < string > &AttributeName ,vector<Where> &where ){
+//     vector <Tuple> ret;
+//     Attribute attr = t.attr_;
+//     vector < int > AttrIndex = t.ConvertIntoIndex( AttributeName );
+//     File * file = bm.GetFile( t.getTitle(), 0 );
+//     bool no_index = true;
+//     for( int i = 0;i < AttributeName.size() ; i ++ ){
+//         int index = t.AttrName2Index[AttributeName[i]];
+//         if( attr.has_index[index] ){
+//             ret = SelectWithIndex( t , file ,attr.index_name[index], where[i] );
+//             AttributeName.erase(AttributeName.begin()+i);
+//             where.erase(where.begin()+i);
+//             no_index = false;
+//             break;
+//         }
+//     }
+//     if ( no_index ){
+//         for( Block * tmp = bm.GetBlockHead(file) ; !tmp->IsEnd() ; tmp = bm.GetNextBlock(file , tmp ) ){
+//             char * data = tmp->GetContent();
+//             for(int i = 0 ; i + t.GetLength() < BLOCK_SIZE ; i += t.GetLength()+1 ){
+//                 if( *(data+i) == 1 ) continue;
+//                 Tuple tempTuple = ConverseIntoTuple( data + i + 1 , & t.attr_ );
+//                 if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
+//                     ret.push_back(tempTuple);
+//                 }
+//             }
+//         } 
+//     }else if ( !ret.size() ){
+//         for( int i = 0 ; i < ret.size() ; i ++ ){
+//             if( !RecordConditionFit( ret[i] , AttrIndex , where ) ){
+//                 ret.erase(ret.begin() + i);
+//             }
+//         }
+//     }
+//     return ret;
+// }
+vector<Tuple> RecordManager :: SelectRecord( Table &t ){
     vector <Tuple> ret;
     Attribute attr = t.attr_;
-    vector < int > AttrIndex = t.ConvertIntoIndex( AttributeName );
     File * file = bm.GetFile( t.getTitle(), 0 );
-    bool no_index = true;
-    for( int i = 0;i < AttributeName.size() ; i ++ ){
-        int index = t.AttrName2Index[AttributeName[i]];
-        if( attr.has_index[index] ){
-            ret = SelectWithIndex( t , file ,attr.index_name[index], where[i] );
-            AttributeName.erase(AttributeName.begin()+i);
-            where.erase(where.begin()+i);
-            no_index = false;
-            break;
+    int flag = 1;
+    for( Block * tmp = bm.GetBlockHead(file) ; flag ; tmp = bm.GetNextBlock(file , tmp ) ){
+        char * data = tmp->GetContent();
+        for(int i = 0 ; i + t.GetLength() < tmp->GetUsingSize() ; i += t.GetLength()+1 ){
+            if( *(data+i) == 1 ) continue;
+            Tuple tempTuple = ConverseIntoTuple( data + i + 1 , & t.attr_ );
+            ret.push_back(tempTuple);
         }
-    }
-    if ( no_index ){
-        for( Block * tmp = bm.GetBlockHead(file) ; !tmp->IsEnd() ; tmp = bm.GetNextBlock(file , tmp ) ){
-            char * data = tmp->GetContent();
-            for(int i = 0 ; i + t.GetLength() < BLOCK_SIZE ; i += t.GetLength()+1 ){
-                if( *(data+i) == 1 ) continue;
-                Tuple tempTuple = ConverseIntoTuple( data + i + 1 , & t.attr_ );
-                if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
-                    ret.push_back(tempTuple);
-                }
-            }
-        } 
-    }else if ( !ret.size() ){
-        for( int i = 0 ; i < ret.size() ; i ++ ){
-            if( !RecordConditionFit( ret[i] , AttrIndex , where ) ){
-                ret.erase(ret.begin() + i);
-            }
-        }
-    }
+        if( tmp->IsEnd() ) flag = 0;
+    } 
     return ret;
 }
-Tuple ConverseIntoTuple( char * data , Attribute * attr ){
-    Tuple ret;
-    for(int i = 0 ; i < attr->num ; i ++ ){
-        ret.addData( ConverseIntoData( data , attr->type[i] ) );
-    }
-    return ret;
-}
-string Data2String( Data d ){
-    if ( d.type < 0){
-        string ret( (char*) (&d.datai) , 4);
-        return ret;
-    }else if( d.type == 0 ){
-        string ret( (char*) (&d.dataf) , 4);
-        ret;
-    }else {
-        string ret = d.datas;
-        ret.resize( d.type );
-        return ret;
-    }
-}
-int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vector<Where> where ){
-    string Index_name ;
-    vector <int > AttrIndex = t.ConvertIntoIndex( target_attr );
-    int SearchIndex = -1;
-    for(int i = 0 ; i < AttrIndex.size() ; i ++ ){
-        if ( t.attr_.has_index[AttrIndex[i]] ) {
-            Index_name = t.attr_.index_name[AttrIndex[i]];
-            SearchIndex = i;
-            break;
-        }
-    }
-    File * file = bm.GetFile( t.getTitle() , 0 ); 
-    int cnt = 0;
-    if( SearchIndex != -1 ){
-        vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where[SearchIndex] );
-        if ( Fetch.size() ){
-            for( int i = 0 ;i < Fetch.size() ; i++ ){
-                Block * tmp = bm.GetBlockByNum( file , Fetch[i].Block_Offset );
-                Tuple tempTuple = ConverseIntoTuple(tmp->GetContent() + 1, &t.attr_ );
-                if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
-                    for( int i = 0 ; i < t.attr_.num; i ++ ){
-                        if( t.attr_.has_index[i] ){
-                            string tmp = Data2String( tempTuple.getData()[i] );
-                            im.Delete_From_Index( t.attr_.index_name[i], tmp );
-                        }
-                    }
-                    char DeletedFlag = 1;
-                    tmp->write( Fetch[i].Offset_in_Block , &DeletedFlag , 1 );
-                    RecordFreeList node = new FreeListNode;
-                    file->AppendFreeList( Fetch[i].Block_Offset , Fetch[i].Offset_in_Block );
-                    cnt ++ ;
-                }
-            }
-        }
-    }else{
-        for( Block * tmp = bm.GetBlockHead(file) ; !tmp->IsEnd() ; tmp = bm.GetNextBlock(file , tmp ) ){
-            for(int i = 0 ; i + t.GetLength() < BLOCK_SIZE ; i += t.GetLength()+1 ){
-                Tuple tempTuple = ConverseIntoTuple( tmp->GetContent() + 1 , & t.attr_ );
-                if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
-                    char DeletedFlag = 1;
-                    tmp->write( i , &DeletedFlag , 1 );
-                    RecordFreeList node = new FreeListNode;
-                    file->AppendFreeList( tmp->GetBlockOffsetNum() , i );
-                    cnt ++ ;
-                }
-            }
-        } 
-    }
-    return cnt;
-}
+// int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vector<Where> where ){
+//     string Index_name ;
+//     vector <int > AttrIndex = t.ConvertIntoIndex( target_attr );
+//     int SearchIndex = -1;
+//     for(int i = 0 ; i < AttrIndex.size() ; i ++ ){
+//         if ( t.attr_.has_index[AttrIndex[i]] ) {
+//             Index_name = t.attr_.index_name[AttrIndex[i]];
+//             SearchIndex = i;
+//             break;
+//         }
+//     }
+//     File * file = bm.GetFile( t.getTitle() , 0 ); 
+//     int cnt = 0;
+//     if( SearchIndex != -1 ){
+//         vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where[SearchIndex] );
+//         if ( Fetch.size() ){
+//             for( int i = 0 ;i < Fetch.size() ; i++ ){
+//                 Block * tmp = bm.GetBlockByNum( file , Fetch[i].Block_Offset );
+//                 Tuple tempTuple = ConverseIntoTuple(tmp->GetContent() + 1, &t.attr_ );
+//                 if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
+//                     for( int i = 0 ; i < t.attr_.num; i ++ ){
+//                         if( t.attr_.has_index[i] ){
+//                             string tmp = Data2String( tempTuple.getData()[i] );
+//                             im.Delete_From_Index( t.attr_.index_name[i], tmp );
+//                         }
+//                     }
+//                     char DeletedFlag = 1;
+//                     tmp->write( Fetch[i].Offset_in_Block , &DeletedFlag , 1 );
+//                     RecordFreeList node = new FreeListNode;
+//                     file->AppendFreeList( Fetch[i].Block_Offset , Fetch[i].Offset_in_Block );
+//                     cnt ++ ;
+//                 }
+//             }
+//         }
+//     }else{
+//         for( Block * tmp = bm.GetBlockHead(file) ; !tmp->IsEnd() ; tmp = bm.GetNextBlock(file , tmp ) ){
+//             for(int i = 0 ; i + t.GetLength() < BLOCK_SIZE ; i += t.GetLength()+1 ){
+//                 Tuple tempTuple = ConverseIntoTuple( tmp->GetContent() + 1 , & t.attr_ );
+//                 if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
+//                     char DeletedFlag = 1;
+//                     tmp->write( i , &DeletedFlag , 1 );
+//                     RecordFreeList node = new FreeListNode;
+//                     file->AppendFreeList( tmp->GetBlockOffsetNum() , i );
+//                     cnt ++ ;
+//                 }
+//             }
+//         } 
+//     }
+//     return cnt;
+// }
+int RecordManager :: DeleteRecord ( Table & t ){
 
+}
 void RecordManager :: DropTable( string TableName){
     File * file = bm.GetFile(TableName , 0);
     bm.ClearTable( file );
@@ -201,43 +221,44 @@ bool RecordManager :: CheckUnique( Table & t , Tuple & tuple ){
     bool ret = true;
     for( int i = 0 ; i < t.attr_.num ; i ++ ){
         if( t.attr_.unique[i] || i == t.attr_.primary_key ){
-            map<string , unordered_set<string >> :: iterator SUIT = t.Unique.find(t.attr_.name[i]);
-            if( SUIT != t.Unique.end() ){
-                unordered_set < string > & ValueSet = SUIT->second ;
-                string data = Data2String( tuple.getData()[i] );
-                unordered_set < string >  ::iterator SETITOR = ValueSet.find( data );
-                if( SETITOR == ValueSet.end() ){
-                    ValueSet.insert( data );
-                }else {
-                    ret = false;
-                }
-            }else{
-                unordered_set < string > ValueSet;
-                ValueSet.insert( Data2String(tuple.getData()[i]) );
-                t.Unique.insert(make_pair(t.attr_.name[i] ,ValueSet ));
+            unordered_set < string > & ValueSet = t.Unique[t.attr_.name[i]] ;
+            string data = Data2String( tuple.getData()[i] );
+            unordered_set < string >  ::iterator SETITOR = ValueSet.find( data );
+            if( SETITOR == ValueSet.end() ){
+                ValueSet.insert( data );
+            }else {
+                ret = false;
+                break;
             }
         }
     }
     return ret;
 }
 int RecordManager :: InsertRecord( Table &t , Tuple& tuple ){
+    if( !CheckUnique( t , tuple ) )  return 0;
     File * file = bm.GetFile( t.getTitle(),0 );
-    string data = '\0';
+    string data("\0",1);
     for( int i = 0 ; i < tuple.getData().size(); i++ ){
         data += Data2String(tuple.getData()[i]);
     }
     int OffsetNum , offset ;
+    int flag = 1 ;
     if( file->freelist == NULL ){
-        for( Block * tmp = bm.GetBlockHead(file ); !tmp->IsEnd() ; tmp = bm.GetNextBlock(file , tmp ) ){
-            if( tmp->GetUsingSize() + t.GetLength() + 1 > BLOCK_SIZE && tmp->GetUsingSize() != BLOCK_SIZE ){
-                tmp->SetUsingSize(BLOCK_SIZE);
-            }else{
-                offset = tmp->GetUsingSize();
-                OffsetNum = tmp->GetBlockOffsetNum();
-                tmp->write( offset , data.c_str() , data.size() );
-                tmp->SetUsingSize( offset + data.size() ); 
-            }
+        Block * tmp = bm.GetBlockHead( file );
+        while( !tmp->IsEnd() ) tmp = bm.GetNextBlock( file , tmp );
+        if( tmp->GetUsingSize() + t.GetLength() + 1 > BLOCK_SIZE){
+            tmp->SetUsingSize(BLOCK_SIZE);
+            Block * nxt = bm.GetEmptyBlock( file );
+            tmp->SetNext( nxt );
+            nxt->SetOffsetNum( tmp->GetBlockOffsetNum() + 1 );
+            tmp->SetEnd( false );
+            nxt->SetEnd( true );
+            tmp = nxt;
         }
+        offset = tmp->GetUsingSize();
+        OffsetNum = tmp->GetBlockOffsetNum();
+        tmp->write( offset , data.c_str() , data.size() );
+        tmp->SetUsingSize( offset + data.size() );
     }else{
         RecordFreeList now = file->freelist;
         file->freelist = file->freelist->next;
@@ -248,64 +269,77 @@ int RecordManager :: InsertRecord( Table &t , Tuple& tuple ){
         Block * tmp = bm.GetBlockByNum(file , OffsetNum);
         tmp->write( offset , data.c_str() , data.size() ); 
     }
-    for( int i = 0 ; i < t.attr_.num; i ++ ){
-        if( t.attr_.has_index[i] ){
-            string tmp = Data2String( tuple.getData()[i] );
-            string KeyType;
-            if( t.attr_.type[i] == -1) KeyType = "int";
-            else if ( t.attr_.type[i] == 0 ) KeyType = "float";
-            else KeyType = "string"; 
-            im.Insert_Into_Index( t.attr_.index_name[i] ,tmp,  KeyType , OffsetNum , offset );
-        }
-    }
+    // for( int i = 0 ; i < t.attr_.num; i ++ ){
+    //     if( t.attr_.has_index[i] ){
+    //         string tmp = Data2String( tuple.getData()[i] );
+    //         string KeyType;
+    //         if( t.attr_.type[i] == -1) KeyType = "int";
+    //         else if ( t.attr_.type[i] == 0 ) KeyType = "float";
+    //         else KeyType = "string"; 
+    //         im.Insert_Into_Index( t.attr_.index_name[i] ,tmp,  KeyType , OffsetNum , offset );
+    //     }
+    // }
+    return 1;
 }
-void RecordManager :: CreateIndex( Table &t , string AttrName , string index_name  ){
-    int index = t.AttrName2Index[AttrName];
-    int KeySize = t.attr_.type[index] < 1 ? 4 : t.attr_.type[index];
-    string KeyType;
-    if( t.attr_.type[index] == -1) KeyType = "int";
-    else if ( t.attr_.type[index] == 0 ) KeyType = "float";
-    else KeyType = "string"; 
-    im.Create_Index( index_name ,KeySize , KeyType);
-    File * file = bm.GetFile( t.getTitle() , 0);
-    int offset = 1;
-    for(int i = 0 ; i < index ; i ++ ){
-        offset += t.attr_.type[i] < 1 ? 4 : t.attr_.type[i];
-    } 
-    int KeySize = t.attr_.type[index] < 1 ? 4 : t.attr_.type[index];
-    int RecordSize = t.GetLength();
-    for( Block * tmp = bm.GetBlockHead(file) ;tmp ; tmp = bm.GetNextBlock( file , tmp)){
-        char* data = tmp->GetContent();
-        for(int i = 0 ; i + RecordSize < BLOCK_SIZE ; i += RecordSize + 1){
-            if( *(data+i) == 1 ) continue;
-            string KeyValue( data + i + 1 , KeySize);
-            im.Insert_Into_Index( index_name , KeyValue , KeyType , tmp->GetBlockOffsetNum() , i);
-        }
-    }
-}
+// void RecordManager :: CreateIndex( Table &t , string AttrName , string index_name  ){
+//     int index = t.AttrName2Index[AttrName];
+//     int KeySize = t.attr_.type[index] < 1 ? 4 : t.attr_.type[index];
+//     string KeyType;
+//     if( t.attr_.type[index] == -1) KeyType = "int";
+//     else if ( t.attr_.type[index] == 0 ) KeyType = "float";
+//     else KeyType = "string"; 
+//     im.Create_Index( index_name ,KeySize , KeyType);
+//     File * file = bm.GetFile( t.getTitle() , 0);
+//     int offset = 1;
+//     for(int i = 0 ; i < index ; i ++ ){
+//         offset += t.attr_.type[i] < 1 ? 4 : t.attr_.type[i];
+//     } 
+//     int RecordSize = t.GetLength();
+//     for( Block * tmp = bm.GetBlockHead(file) ;tmp ; tmp = bm.GetNextBlock( file , tmp)){
+//         char* data = tmp->GetContent();
+//         for(int i = 0 ; i + RecordSize < BLOCK_SIZE ; i += RecordSize + 1){
+//             if( *(data+i) == 1 ) continue;
+//             string KeyValue( data + i + 1 , KeySize);
+//             im.Insert_Into_Index( index_name , KeyValue , KeyType , tmp->GetBlockOffsetNum() , i);
+//         }
+//     }
+// }
+
 ostream & operator << ( ostream & out , Data tmp ){
     if( tmp.type == -1 ) out << tmp.datai;
     else if( tmp.type == 0 ) out << tmp.dataf;
     else out << tmp.datas;
     return out;
 }
-void RecordManager :: ShowTuple( vector <Tuple> tuples , Table & t){
+void RecordManager :: ShowTuple( vector <Tuple> &tuples , Table & t , vector <string >AttrName ){
     int all_length = 0;
-    for(int i = 0 ; i < t.attr_.num ; i ++ ){
-        int length = t.attr_.type[i] < 1 ? 10 : t.attr_.type[i] ;
+    if( AttrName.size() == 0 ){
+        cout << "There is " << 0 << " record shown as above" << endl;
+        return ;
+    }
+    vector < int > index = t.ConvertIntoIndex( AttrName );
+    for(int i = 0 ; i < index.size() ; i ++ ){
+        int length = t.attr_.type[index[i]] < 1 ? 10 : t.attr_.type[index[i]] ;
         all_length += length;
-        cout << "|" << *right << setw(length) << t.attr_.name[i];
+        cout << "|" << *right << setw(length) << t.attr_.name[index[i]];
     }
     cout << "|" << endl;
-    for(int i = 0 ; i < all_length ; i++ )cout << "-" << endl;
+    for(int i = 0 ; i < all_length+t.attr_.num ; i++ )cout << "-" ;
+    cout << endl;
     for(int i = 0; i < tuples.size() ; i++ ){
-        for(int j = 0 ; j < tuples[i].getData().size() ; j ++ ){
-            int length = t.attr_.type[i] < 1 ? 10 : t.attr_.type[i];
-            cout << "|" << *right << setw(length) << tuples[i].getData()[j]; 
+        for(int j = 0 ; j < index.size() ; j ++ ){
+            int length = t.attr_.type[index[j]] < 1 ? 10 : t.attr_.type[index[j]];
+            if( t.attr_.type[index[j]] == -1 )
+            cout << "|" << right << setw(length) << tuples[i].getData()[index[j]].datai; 
+            else if( t.attr_.type[index[j]] == 0 )
+            cout << "|" << right << setw(length) << tuples[i].getData()[index[j]].dataf;
+            else 
+            cout << "|" << right << setw(length) << tuples[i].getData()[index[j]].datas.c_str();
         }
         cout << "|" << endl;
-        for(int j = 0 ; j < all_length ; j++ )cout << "-" ;
+        for(int j = 0 ; j < all_length+t.attr_.num ; j++ )cout << "-" ;
         cout << endl;
     }
-    cout << "There are " << tuples.size() << "records shown as above" << endl;
+    cout << endl;
+    cout << "There are " << tuples.size() << " records shown as above" << endl;
 }

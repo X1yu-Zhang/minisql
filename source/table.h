@@ -18,11 +18,11 @@ public:
     Attribute attr_;  //????
     map<string , int> AttrName2Index;
     map<string , unordered_set<string> > Unique;
-
-    Table() {};
+    
+    Table():length(0){};
     Table(string title, Attribute attr);
     Table(const Table& table_in);
-    Table( string name ):title_(name){};
+    Table( string name ):title_(name),length(0){};
     int GetLength();
     void SetTitle( string name );
     string getTitle();
@@ -31,6 +31,9 @@ public:
     friend istream& operator>>( istream & in , Table & t); 
     friend ostream& operator<<( ostream & out , const Table & t);
     vector<int >ConvertIntoIndex( const vector<string> AttrName );
+    void ShowTableInfo();
+    void ReadUnique();
+    void WriteUnique();
 };
 
 #endif

@@ -22,7 +22,7 @@ private:
     bool pin;
     int offsetNum;
     int UsingSize;
-    double time;
+    int time;
     Block * next;
     Block * pre;
     char *data;
@@ -42,7 +42,10 @@ public:
     void write( int offset, const char * data,int length );
     void SetUsingSize(int size);
     int GetUsingSize(); 
+    void SetNext( Block * next );
     int GetBlockOffsetNum();
+    void SetOffsetNum( int num );
+    void SetEnd( bool end );
     char * GetContent();
     bool IsEnd( );
 };

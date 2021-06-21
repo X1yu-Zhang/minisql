@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "*.m": "matlab",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "*.tcc": "cpp",
+        "fstream": "cpp"
     }
 }

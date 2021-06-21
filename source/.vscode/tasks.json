@@ -7,9 +7,13 @@
             "args": [
                 "-g",
                 "${file}",
-                "../File.*",
-                "./buffermanager.*",
-                "../Block.*",
+                "File.*",
+                "./BufferManager/*",
+                "Block.*",
+                "tuple.*",
+                "table.*",
+                "./RecordManager/*",
+                "./CatalogManager/*",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],

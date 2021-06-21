@@ -18,11 +18,12 @@ public:
     
     Block * GetNextBlock( File * file , Block * position);
     Block * GetBlockByNum( File * file , int offsetNum );
-    Block * GetEmptyBlock();
+    Block * GetEmptyBlock( File * file );
     Block * GetBlockHead( File * file );
     Block * GetBlock( File * file, Block * position );
     Block * GetIndexBlock( File * file );
     Block * GetReplaceBlock();
+    Block * GetIndexBlock( File * file , Block * current, bool IsFirst = false );
     void ClearTable( File * file );
     void DeleteFileFromList( string filename );
     void CloseFile( File * file, bool Delete = false );

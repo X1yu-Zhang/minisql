@@ -24,6 +24,22 @@ File * BufferManager :: GetFile( string table_name, int type ){
     }
     return ret;
 }
+void BufferManager :: CloseFile( File * file, bool Delete ){
+    if( !file->type && !Delete )
+        file->WriteFreeList();
+	Block * tmp = file->head ,* next;
+    for( ; tmp ; tmp = next){
+        next = tmp->next;
+        if( tmp->dirty && !Delete )
+            tmp->WriteBack();
+        total_block -- ;
+        tmp->clear();
+    }
+	file->head = NULL;
+	file->filename = "";
+	file->next = NULL;
+	file->pre = NULL;
+}
 BufferManager :: ~BufferManager(){
     File * next;
     for(File * tmp = FileHead ; tmp ; tmp = next){
@@ -34,7 +50,7 @@ BufferManager :: ~BufferManager(){
 }
 
 Block * BufferManager :: GetReplaceBlock(){
-    clock_t max_clock = clock()*1.0 / 1000;
+    clock_t max_clock = clock();
     Block * ret = NULL;
     for(int i = 0 ; i < BLOCK_NUMBER ; i++ ){
         if( block_pool[i].time < max_clock && !block_pool[i].pin && block_pool[i].offsetNum != -1 ){
@@ -45,8 +61,7 @@ Block * BufferManager :: GetReplaceBlock(){
     return ret;
 }
 Block * BufferManager :: GetBlock( File * file, Block * position ){
-    string filename = file->filename;
-    Block * ret = GetEmptyBlock();
+    Block * ret = GetEmptyBlock( file );
     if( position && !position->next ){
         ret->pre = position;
         position->next = ret;
@@ -66,8 +81,6 @@ Block * BufferManager :: GetBlock( File * file, Block * position ){
         file->head = ret;
     }
     ret->SetClock();
-    ret->file = file;
-    ret->filename = filename;
     ret->ReadIn();
     return ret;
 }
@@ -136,7 +149,7 @@ void BufferManager :: ShowInfo( Block * tmp ){
         cout << endl;
     }
 }
-Block * BufferManager :: GetEmptyBlock(){
+Block * BufferManager :: GetEmptyBlock( File * file ){
     Block * ret;
     if ( total_block < BLOCK_NUMBER ){
         for(int i = 0 ;i < BLOCK_NUMBER ; i ++ ){
@@ -157,24 +170,11 @@ Block * BufferManager :: GetEmptyBlock(){
         tmp->clear();
         ret = tmp;
     }
+    ret->file = file;
+    ret->filename = file->filename;
     return ret;
 }
-void BufferManager :: CloseFile( File * file, bool Delete = false ){
-    if( !file->type && !Delete )
-        file->WriteFreeList();
-	Block * tmp = file->head ,* next;
-    for( ; tmp ; tmp = next){
-        next = tmp->next;
-        if( tmp->dirty && !Delete )
-            tmp->WriteBack();
-        total_block -- ;
-        tmp->clear();
-    }
-	file->head = NULL;
-	file->filename = "";
-	file->next = NULL;
-	file->pre = NULL;
-}
+
 void BufferManager :: DeleteFileFromList( string  filename ){
     if( FileHead == NULL )return ;
     for ( File * tmp = FileHead; tmp ; tmp = tmp->next ){
@@ -199,4 +199,21 @@ void BufferManager :: ClearTable( File * file ){
     fstream f2("../data/record/"+file->filename+".db" , ios :: out );
     f1.close();
     f2.close();
+}
+Block * BufferManager :: GetIndexBlock( File * file , Block * current, bool IsFirst ){
+    if( file == NULL ) return NULL ;
+    if( IsFirst ){
+        Block * next;
+        for( Block * tmp = file->head ; tmp ; tmp = next ){
+            next = tmp->next;
+            tmp->clear();
+            total_block -- ;
+        }
+        file->head = NULL;
+    }
+    Block * ret = GetEmptyBlock( file );
+    if( file->head == NULL ){
+        file->head = ret;
+    }
+    return ret;
 }
