@@ -19,7 +19,7 @@ File * BufferManager :: GetFile( string table_name, int type ){
             ret->pre = tail;
             tail->next = ret;
         }
-        if( ret->type )
+        if( !ret->type )
             ret->ReadFreeList();
     }
     return ret;
@@ -27,6 +27,13 @@ File * BufferManager :: GetFile( string table_name, int type ){
 void BufferManager :: CloseFile( File * file, bool Delete ){
     if( !file->type && !Delete )
         file->WriteFreeList();
+    else if( Delete ){
+        RecordFreeList next;
+        for(RecordFreeList tmp = file->freelist ; tmp ; tmp = next){
+            next = tmp->next;
+            delete tmp;
+        }
+    }
 	Block * tmp = file->head ,* next;
     for( ; tmp ; tmp = next){
         next = tmp->next;
@@ -120,11 +127,11 @@ Block * BufferManager :: GetNextBlock( File * file, Block * position ){
 }
 
 Block * BufferManager :: GetBlockByNum( File * file , int offsetNum ){
-    Block * ret;
+    Block * ret = GetBlockHead(file);
     if( offsetNum == 0 )
         ret = file->head;
+
     else{
-        ret = GetBlockHead(file);
         for(int i = 0; i < offsetNum ; i ++ ){
             ret = GetNextBlock(file , ret);
         }
@@ -187,18 +194,11 @@ void BufferManager :: DeleteFileFromList( string  filename ){
             }else{
                 FileHead = tmp->next;
             }
-            CloseFile(tmp);
+            CloseFile( tmp , true );
             delete tmp;
             return ;
         }
     }
-}
-void BufferManager :: ClearTable( File * file ){
-    CloseFile( file , true );
-    fstream f1("../data/record/"+file->filename+"_FreeList.db", ios :: out );
-    fstream f2("../data/record/"+file->filename+".db" , ios :: out );
-    f1.close();
-    f2.close();
 }
 Block * BufferManager :: GetIndexBlock( File * file , Block * current, bool IsFirst ){
     if( file == NULL ) return NULL ;

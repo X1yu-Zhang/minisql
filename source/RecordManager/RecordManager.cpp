@@ -178,7 +178,7 @@ vector<Tuple> RecordManager :: SelectRecord( Table &t ){
 //         if ( Fetch.size() ){
 //             for( int i = 0 ;i < Fetch.size() ; i++ ){
 //                 Block * tmp = bm.GetBlockByNum( file , Fetch[i].Block_Offset );
-//                 Tuple tempTuple = ConverseIntoTuple(tmp->GetContent() + 1, &t.attr_ );
+//                 Tuple tempTuple = ConverseIntoTuple(tmp->GetContent() + 1 + i, &t.attr_ );
 //                 if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
 //                     for( int i = 0 ; i < t.attr_.num; i ++ ){
 //                         if( t.attr_.has_index[i] ){
@@ -211,24 +211,48 @@ vector<Tuple> RecordManager :: SelectRecord( Table &t ){
 //     return cnt;
 // }
 int RecordManager :: DeleteRecord ( Table & t ){
-
+    string Index_name ;
+    File * file = bm.GetFile( t.getTitle() , 0 ); 
+    int cnt = 0;
+    for( Block * tmp = bm.GetBlockHead(file) ; 1 ; tmp = bm.GetNextBlock(file , tmp ) ){
+        for(int i = 0 ; i + t.GetLength() < tmp->GetUsingSize() ; i += t.GetLength()+1 ){
+            Tuple tempTuple = ConverseIntoTuple( tmp->GetContent() + 1 + i , & t.attr_ );
+            char DeletedFlag = 1;
+            tmp->write( i , &DeletedFlag , 1 );
+            RecordFreeList node = new FreeListNode;
+            file->AppendFreeList( tmp->GetBlockOffsetNum() , i );
+            DeleteUnique( t , tempTuple );
+            cnt ++ ;
+        }
+        if( tmp->IsEnd() ) break;
+    } 
+    return cnt;
 }
 void RecordManager :: DropTable( string TableName){
     File * file = bm.GetFile(TableName , 0);
-    bm.ClearTable( file );
+    bm.DeleteFileFromList( TableName );
 }
-bool RecordManager :: CheckUnique( Table & t , Tuple & tuple ){
+void RecordManager :: DeleteUnique( Table & t , Tuple & tuple ){
+    CheckUnique( t , tuple , true ); 
+}
+bool RecordManager :: CheckUnique( Table & t , Tuple & tuple, bool flag ){
     bool ret = true;
     for( int i = 0 ; i < t.attr_.num ; i ++ ){
         if( t.attr_.unique[i] || i == t.attr_.primary_key ){
             unordered_set < string > & ValueSet = t.Unique[t.attr_.name[i]] ;
             string data = Data2String( tuple.getData()[i] );
             unordered_set < string >  ::iterator SETITOR = ValueSet.find( data );
-            if( SETITOR == ValueSet.end() ){
-                ValueSet.insert( data );
-            }else {
-                ret = false;
-                break;
+            if( flag ){
+                if( SETITOR != ValueSet.end() ){
+                    ValueSet.erase( data );
+                }
+            }else{
+                if( SETITOR == ValueSet.end() ){
+                    ValueSet.insert( data );
+                }else {
+                    ret = false;
+                    break;
+                }
             }
         }
     }
@@ -321,7 +345,7 @@ void RecordManager :: ShowTuple( vector <Tuple> &tuples , Table & t , vector <st
     for(int i = 0 ; i < index.size() ; i ++ ){
         int length = t.attr_.type[index[i]] < 1 ? 10 : t.attr_.type[index[i]] ;
         all_length += length;
-        cout << "|" << *right << setw(length) << t.attr_.name[index[i]];
+        cout << "|" << left << setw(length) << t.attr_.name[index[i]];
     }
     cout << "|" << endl;
     for(int i = 0 ; i < all_length+t.attr_.num ; i++ )cout << "-" ;
@@ -330,11 +354,11 @@ void RecordManager :: ShowTuple( vector <Tuple> &tuples , Table & t , vector <st
         for(int j = 0 ; j < index.size() ; j ++ ){
             int length = t.attr_.type[index[j]] < 1 ? 10 : t.attr_.type[index[j]];
             if( t.attr_.type[index[j]] == -1 )
-            cout << "|" << right << setw(length) << tuples[i].getData()[index[j]].datai; 
+            cout << "|" << left << setw(length) << tuples[i].getData()[index[j]].datai; 
             else if( t.attr_.type[index[j]] == 0 )
-            cout << "|" << right << setw(length) << tuples[i].getData()[index[j]].dataf;
+            cout << "|" << left << setw(length) << tuples[i].getData()[index[j]].dataf;
             else 
-            cout << "|" << right << setw(length) << tuples[i].getData()[index[j]].datas.c_str();
+            cout << "|" << left << setw(length) << tuples[i].getData()[index[j]].datas.c_str();
         }
         cout << "|" << endl;
         for(int j = 0 ; j < all_length+t.attr_.num ; j++ )cout << "-" ;

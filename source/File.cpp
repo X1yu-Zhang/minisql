@@ -1,7 +1,7 @@
 #include "File.h"
 
 bool File :: ReadFreeList(){
-    fstream file("../data/record/"+this->filename+"_FreeList.db", ios :: in );
+    fstream file("./data/record/"+this->filename+"_FreeList.db", ios :: in );
     if( !file.is_open() ) return false;
     int n;
     file >> n;
@@ -19,7 +19,7 @@ bool File :: ReadFreeList(){
     return true;
 }
 void File :: WriteFreeList(){
-    fstream file("../data/record/"+this->filename+"_FreeList.db", ios :: out );
+    fstream file("./data/record/"+this->filename+"_FreeList.db", ios :: out );
     RecordFreeList now = freelist;
     int cnt = 0;
     while( now ){
