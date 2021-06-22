@@ -108,42 +108,42 @@ bool  RecordManager :: RecordConditionFit(Tuple &t , vector < int > &AttributeNa
     } 
     return ret;
 }
-// vector<Tuple> RecordManager :: SelectRecord( Table &t, vector < string > &AttributeName ,vector<Where> &where ){
-//     vector <Tuple> ret;
-//     Attribute attr = t.attr_;
-//     vector < int > AttrIndex = t.ConvertIntoIndex( AttributeName );
-//     File * file = bm.GetFile( t.getTitle(), 0 );
-//     bool no_index = true;
-//     for( int i = 0;i < AttributeName.size() ; i ++ ){
-//         int index = t.AttrName2Index[AttributeName[i]];
-//         if( attr.has_index[index] ){
-//             ret = SelectWithIndex( t , file ,attr.index_name[index], where[i] );
-//             AttributeName.erase(AttributeName.begin()+i);
-//             where.erase(where.begin()+i);
-//             no_index = false;
-//             break;
-//         }
-//     }
-//     if ( no_index ){
-//         for( Block * tmp = bm.GetBlockHead(file) ; !tmp->IsEnd() ; tmp = bm.GetNextBlock(file , tmp ) ){
-//             char * data = tmp->GetContent();
-//             for(int i = 0 ; i + t.GetLength() < BLOCK_SIZE ; i += t.GetLength()+1 ){
-//                 if( *(data+i) == 1 ) continue;
-//                 Tuple tempTuple = ConverseIntoTuple( data + i + 1 , & t.attr_ );
-//                 if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
-//                     ret.push_back(tempTuple);
-//                 }
-//             }
-//         } 
-//     }else if ( !ret.size() ){
-//         for( int i = 0 ; i < ret.size() ; i ++ ){
-//             if( !RecordConditionFit( ret[i] , AttrIndex , where ) ){
-//                 ret.erase(ret.begin() + i);
-//             }
-//         }
-//     }
-//     return ret;
-// }
+vector<Tuple> RecordManager :: SelectRecord( Table &t, vector < string > &AttributeName ,vector<Where> &where ){
+    vector <Tuple> ret;
+    Attribute attr = t.attr_;
+    vector < int > AttrIndex = t.ConvertIntoIndex( AttributeName );
+    File * file = bm.GetFile( t.getTitle(), 0 );
+    bool no_index = true;
+    // for( int i = 0;i < AttributeName.size() ; i ++ ){
+    //     int index = t.AttrName2Index[AttributeName[i]];
+    //     if( attr.has_index[index] ){
+    //         ret = SelectWithIndex( t , file ,attr.index_name[index], where[i] );
+    //         AttributeName.erase(AttributeName.begin()+i);
+    //         where.erase(where.begin()+i);
+    //         no_index = false;
+    //         break;
+    //     }
+    // }
+    if ( no_index ){
+        for( Block * tmp = bm.GetBlockHead(file) ; !tmp->IsEnd() ; tmp = bm.GetNextBlock(file , tmp ) ){
+            char * data = tmp->GetContent();
+            for(int i = 0 ; i + t.GetLength() < BLOCK_SIZE ; i += t.GetLength()+1 ){
+                if( *(data+i) == 1 ) continue;
+                Tuple tempTuple = ConverseIntoTuple( data + i + 1 , & t.attr_ );
+                if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
+                    ret.push_back(tempTuple);
+                }
+            }
+        } 
+    }else if ( !ret.size() ){
+        for( int i = 0 ; i < ret.size() ; i ++ ){
+            if( !RecordConditionFit( ret[i] , AttrIndex , where ) ){
+                ret.erase(ret.begin() + i);
+            }
+        }
+    }
+    return ret;
+}
 vector<Tuple> RecordManager :: SelectRecord( Table &t ){
     vector <Tuple> ret;
     Attribute attr = t.attr_;
