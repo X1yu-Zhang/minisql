@@ -1,18 +1,19 @@
 ﻿#include <iostream>
-#include "../include/interpreter.h"
-#include "../include/CatalogManager.h"
-#include "../include/API.h"
-#include "../include/RecordManager.h"
-#include "../include/buffermanager.h"
-#include "../include/IndexManager.h"
-#include "../include/tuple.h"
-#include "../include/table.h"
+#include "interpreter.h"
+#include "CatalogManager.h"
+#include "API.h"
+#include "RecordManager.h"
+#include "buffermanager.h"
+#include "IndexManager.h"
+#include "tuple.h"
+#include "table.h"
 
 int main()
 {
     BufferManager bm;
     CatalogManager cm;
     IndexManager  im( bm );
+
     RecordManager rm( bm ,im );
     API api (rm ,cm );
     Interpreter interpreter( api , cm , rm );

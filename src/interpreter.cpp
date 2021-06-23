@@ -1,4 +1,5 @@
-#include "../include/interpreter.h"
+#include "interpreter.h"
+#include "typeinfo.h"
 
 void Interpreter::getQuery() 
 {
@@ -145,7 +146,6 @@ string Interpreter::getWord(int pos, int& end_pos) {
     }
     return PartWord;
 }
-
 void Interpreter::EXEC() {
     if (query.substr(0, 6) == "select") {
         EXEC_SELECT();
@@ -229,7 +229,6 @@ void Interpreter::EXEC_EXIT() {
     cout << ">>>See you next time! ";
     exit(0);
 }
-
 void Interpreter::EXEC_FILE() {
     int check_index = 0;
     int start_index = 0;
@@ -266,7 +265,6 @@ void Interpreter::EXEC_SHOW() {
     }
   //  CM.showTable(table_name);
 }
-
 void Interpreter::EXEC_DELETE() {
 
     vector<string> attr_name;
@@ -528,7 +526,6 @@ void Interpreter::EXEC_CREATE_TABLE() {
     attr_.primary_key = primary;
     api.createTable( table_name, attr_ );
 }
-
 void Interpreter::EXEC_SELECT()
 {
     string table_name;

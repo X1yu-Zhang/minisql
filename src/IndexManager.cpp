@@ -2,7 +2,7 @@
 // Created by 11314 on 2021/6/18.
 //
 #include <iostream>
-#include "../include/IndexManager.h"
+#include "IndexManager.h"
 #include "string"
 #include <sstream>
 using namespace std;
@@ -192,21 +192,23 @@ bool IndexManager::Insert_Into_Index(string IndexName,string KeyValue,string Key
     return false;
 }
 
-
 vector<Search_Info> IndexManager::Search_In_Index(string IndexName, Where query){
     vector<Search_Info> ret ;
     if( query.data.type == -1){
-        Index_Where<int>Condi ;
+        Index_Where<int> Condi ;
+        Node<int> *root=IndexSet[IndexName].Int_Root;
         Condi.data = query.data.datai;
-        ret = Search_In_Index( IndexName , Condi);
+        ret = Node_Search( root , Condi);
     }else if( query.data.type == 0 ){
         Index_Where<float>Condi ;
+        Node<float> *root=IndexSet[IndexName].Float_Root;
         Condi.data = query.data.dataf;
-        ret = Search_In_Index( IndexName , Condi);
+        ret = Node_Search<float>( root , Condi);
     }else{
         Index_Where<string>Condi ;
         Condi.data = query.data.datas;
-        ret = Search_In_Index( IndexName , Condi);
+        Node<string> *root=IndexSet[IndexName].String_Root;
+        ret = Node_Search<string>( root , Condi);
     }
     return ret;
 }

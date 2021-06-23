@@ -1,4 +1,4 @@
-#include "../include/CatalogManager.h"
+#include "CatalogManager.h"
 CatalogManager :: CatalogManager(){
     fstream f1("./data/catalog/tablenameset.db",ios::in);
     fstream f2("./data/catalog/indexnameset.db",ios::in);
