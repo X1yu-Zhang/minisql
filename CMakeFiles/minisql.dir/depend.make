@@ -41,6 +41,7 @@ CMakeFiles/minisql.dir/src/RecordManager.cpp.o: include/File.h
 CMakeFiles/minisql.dir/src/RecordManager.cpp.o: include/IndexManager.h
 CMakeFiles/minisql.dir/src/RecordManager.cpp.o: include/RecordManager.h
 CMakeFiles/minisql.dir/src/RecordManager.cpp.o: include/buffermanager.h
+CMakeFiles/minisql.dir/src/RecordManager.cpp.o: include/exception.h
 CMakeFiles/minisql.dir/src/RecordManager.cpp.o: include/table.h
 CMakeFiles/minisql.dir/src/RecordManager.cpp.o: include/tuple.h
 CMakeFiles/minisql.dir/src/RecordManager.cpp.o: src/RecordManager.cpp

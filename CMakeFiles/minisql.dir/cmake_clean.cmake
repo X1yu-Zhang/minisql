@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "/mnt/d/PROGRAM/cpp/minisql"
+  "/mnt/d/PROGRAM/cpp/minisql.pdb"
   "CMakeFiles/minisql.dir/src/API.cpp.o"
   "CMakeFiles/minisql.dir/src/Block.cpp.o"
   "CMakeFiles/minisql.dir/src/CatalogManager.cpp.o"
@@ -10,8 +12,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/minisql.dir/src/main.cpp.o"
   "CMakeFiles/minisql.dir/src/table.cpp.o"
   "CMakeFiles/minisql.dir/src/tuple.cpp.o"
-  "minisql"
-  "minisql.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

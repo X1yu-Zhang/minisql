@@ -5,6 +5,7 @@
 #include <iomanip>
 #include "tuple.h"
 #include "table.h"
+#include "exception.h"
 class RecordManager {
 private:
     BufferManager& bm;

@@ -1,5 +1,5 @@
 #include "../include/interpreter.h"
-#include "typeinfo.h"
+#include <typeinfo>
 
 void Interpreter::getQuery() 
 {
@@ -227,6 +227,11 @@ void Interpreter::EXEC_DROP_INDEX() {
 // exit
 void Interpreter::EXEC_EXIT() {
     cout << ">>>See you next time! ";
+    api.~API();
+    IM.~IndexManager();
+    CM.~CatalogManager();
+    RM.~RecordManager();
+    BM.~BufferManager();
     exit(0);
 }
 void Interpreter::EXEC_FILE() {
@@ -523,6 +528,7 @@ void Interpreter::EXEC_CREATE_TABLE() {
             check_index += 2;
         }
     }
+    attr_.num = i;
     attr_.primary_key = primary;
     api.createTable( table_name, attr_ );
 }
@@ -637,9 +643,6 @@ void Interpreter::EXEC_SELECT()
                 }
             }
             where_select.push_back(tmp_where);
-        } 
-        for(int i = 0 ; i < target_name.size() ; i++ ){
-            cout << target_name[i] << endl;
         }
         api.selectRecord(table_name, attr_name, target_name, where_select);
     }

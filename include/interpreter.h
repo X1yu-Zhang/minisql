@@ -9,6 +9,7 @@
 #include "exception.h"
 #include "CatalogManager.h"
 #include "RecordManager.h"
+#include "IndexManager.h"
 using namespace std;
 #include <sstream>
 
@@ -18,11 +19,13 @@ public:
 	Interpreter();
 	void getQuery();
 	void EXEC();
-	Interpreter(API & a , CatalogManager & c , RecordManager &r ):api(a),CM(c),RM(r){};
+	Interpreter(API & a , CatalogManager & c , RecordManager &r, IndexManager &i , BufferManager &b ):api(a),CM(c),RM(r),IM(i),BM(b){};
 private:
 	API & api;
 	CatalogManager &CM;
 	RecordManager &RM;
+	IndexManager &IM;
+	BufferManager &BM;
 	string query;
 	int getType(int pos, int& end_pos);//������������
 	int getBits(int num);//���������ĳ���

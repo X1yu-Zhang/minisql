@@ -6,7 +6,9 @@
         "*.tcc": "cpp",
         "compare": "cpp",
         "type_traits": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "iostream": "cpp",
+        "chrono": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

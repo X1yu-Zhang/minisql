@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: /mnt/d/PROGRAM/cpp/db_test
-BuildDirectory: /mnt/d/PROGRAM/cpp/db_test
+SourceDirectory: /mnt/d/PROGRAM/cpp/db
+BuildDirectory: /mnt/d/PROGRAM/cpp/db
 
 # Where to place the cost data store
 CostDataFile: 
@@ -26,7 +26,7 @@ SubmitURL: http://
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/usr/bin/cmake" "/mnt/d/PROGRAM/cpp/db_test"
+ConfigureCommand: "/usr/bin/cmake" "/mnt/d/PROGRAM/cpp/db"
 MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}" -- -i
 DefaultCTestConfigurationType: Release
 
@@ -57,9 +57,9 @@ P4UpdateOptions:
 P4UpdateCustom: 
 
 # Generic update command
-UpdateCommand: 
+UpdateCommand: /usr/bin/git
 UpdateOptions: 
-UpdateType: 
+UpdateType: git
 
 # Compiler info
 Compiler: /usr/bin/c++

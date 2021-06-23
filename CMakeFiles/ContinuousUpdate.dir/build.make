@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/d/PROGRAM/cpp/db_test
+CMAKE_SOURCE_DIR = /mnt/d/PROGRAM/cpp/db
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/d/PROGRAM/cpp/db_test
+CMAKE_BINARY_DIR = /mnt/d/PROGRAM/cpp/db
 
 # Utility rule file for ContinuousUpdate.
 
@@ -71,6 +71,6 @@ CMakeFiles/ContinuousUpdate.dir/clean:
 .PHONY : CMakeFiles/ContinuousUpdate.dir/clean
 
 CMakeFiles/ContinuousUpdate.dir/depend:
-	cd /mnt/d/PROGRAM/cpp/db_test && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/d/PROGRAM/cpp/db_test /mnt/d/PROGRAM/cpp/db_test /mnt/d/PROGRAM/cpp/db_test /mnt/d/PROGRAM/cpp/db_test /mnt/d/PROGRAM/cpp/db_test/CMakeFiles/ContinuousUpdate.dir/DependInfo.cmake --color=$(COLOR)
+	cd /mnt/d/PROGRAM/cpp/db && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/d/PROGRAM/cpp/db /mnt/d/PROGRAM/cpp/db /mnt/d/PROGRAM/cpp/db /mnt/d/PROGRAM/cpp/db /mnt/d/PROGRAM/cpp/db/CMakeFiles/ContinuousUpdate.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/ContinuousUpdate.dir/depend
 

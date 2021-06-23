@@ -16,6 +16,10 @@ void API::selectRecord(string table_name, vector<string> DispAttr ,vector<string
     Table & t = catalog.GetTable(table_name);
     for(int i = 0 ; i < DispAttr.size() ; i++ ){
         if( i == 0 && DispAttr.size() == 1 && DispAttr[0] == "*" ){
+            DispAttr.erase(DispAttr.begin());
+            for(int j = 0 ; j < t.attr_.num ; j ++ ){
+                DispAttr.push_back(t.attr_.name[j]);
+            }
             break;
         }else if( !t.HasAttribute( DispAttr[i] ) ){
             throw attribute_not_exist();
@@ -51,10 +55,11 @@ void API::insertRecord(string table_name, Tuple& tuple)
 }
 
 //������
-void API::createTable( string table_name, Attribute attribute )
+void API::createTable( string table_name, Attribute &attribute )
 {
     if( catalog.HasTable( table_name ) ) throw table_not_exist();
     Table t( table_name , attribute );
+    t.ShowTableInfo();
     catalog.CreateTable( t );
 }
 

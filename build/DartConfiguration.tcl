@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: D:/PROGRAM/cpp/db_test
-BuildDirectory: D:/PROGRAM/cpp/db_test/build
+SourceDirectory: D:/PROGRAM/cpp/db
+BuildDirectory: D:/PROGRAM/cpp/db/build
 
 # Where to place the cost data store
 CostDataFile: 
@@ -26,7 +26,7 @@ SubmitURL: http://
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "C:/Program Files/CMake/bin/cmake.exe" "D:/PROGRAM/cpp/db_test"
+ConfigureCommand: "C:/Program Files/CMake/bin/cmake.exe" "D:/PROGRAM/cpp/db"
 MakeCommand: "C:\Program Files\CMake\bin\cmake.exe" --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 
@@ -44,7 +44,7 @@ SVNOptions:
 SVNUpdateOptions: 
 
 # Git options
-GITCommand: 
+GITCommand: D:/Program Files/Git/cmd/git.exe
 GITInitSubmodules: 
 GITUpdateOptions: 
 GITUpdateCustom: 
@@ -57,9 +57,9 @@ P4UpdateOptions:
 P4UpdateCustom: 
 
 # Generic update command
-UpdateCommand: 
+UpdateCommand: D:/Program Files/Git/cmd/git.exe
 UpdateOptions: 
-UpdateType: 
+UpdateType: git
 
 # Compiler info
 Compiler: C:/TDM-GCC-64/bin/x86_64-w64-mingw32-g++.exe

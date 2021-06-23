@@ -1,57 +1,57 @@
 [
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\API.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\API.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/API.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\API.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\API.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/API.cpp"
 },
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\Block.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\Block.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/Block.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\Block.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\Block.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/Block.cpp"
 },
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\CatalogManager.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\CatalogManager.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/CatalogManager.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\CatalogManager.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\CatalogManager.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/CatalogManager.cpp"
 },
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\File.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\File.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/File.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\File.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\File.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/File.cpp"
 },
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\IndexManager.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\IndexManager.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/IndexManager.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\IndexManager.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\IndexManager.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/IndexManager.cpp"
 },
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\RecordManager.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\RecordManager.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/RecordManager.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\RecordManager.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\RecordManager.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/RecordManager.cpp"
 },
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\buffermanager.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\buffermanager.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/buffermanager.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\buffermanager.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\buffermanager.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/buffermanager.cpp"
 },
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\interpreter.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\interpreter.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/interpreter.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\interpreter.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\interpreter.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/interpreter.cpp"
 },
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\main.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\main.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/main.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\main.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\main.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/main.cpp"
 },
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\table.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\table.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/table.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\table.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\table.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/table.cpp"
 },
 {
-  "directory": "D:/PROGRAM/cpp/db_test/build",
-  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\tuple.cpp.obj -c D:\\PROGRAM\\cpp\\db_test\\src\\tuple.cpp",
-  "file": "D:/PROGRAM/cpp/db_test/src/tuple.cpp"
+  "directory": "D:/PROGRAM/cpp/db/build",
+  "command": "C:\\TDM-GCC-64\\bin\\x86_64-w64-mingw32-g++.exe -g -o CMakeFiles\\minisql.dir\\src\\tuple.cpp.obj -c D:\\PROGRAM\\cpp\\db\\src\\tuple.cpp",
+  "file": "D:/PROGRAM/cpp/db/src/tuple.cpp"
 }
 ]

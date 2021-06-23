@@ -101,9 +101,9 @@ void Table :: ConstructMap(){
 }
 
 vector<int > Table :: ConvertIntoIndex( const vector<string> AttrName ){
-    vector<int> ret(AttrName.size());
+    vector<int> ret;
     for(int i = 0;i < AttrName.size() ; i++ ){
-        ret[i] = AttrName2Index[AttrName[i]];
+        ret.push_back(AttrName2Index[AttrName[i]]);
     }
     return ret;
 }

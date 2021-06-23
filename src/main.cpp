@@ -7,7 +7,7 @@
 #include "../include/IndexManager.h"
 #include "../include/tuple.h"
 #include "../include/table.h"
-
+#include <chrono>
 int main()
 {
     BufferManager bm;
@@ -16,17 +16,22 @@ int main()
 
     RecordManager rm( bm ,im );
     API api (rm ,cm );
-    Interpreter interpreter( api , cm , rm );
+    Interpreter interpreter( api , cm , rm, im ,bm);
+    chrono::steady_clock::time_point start, end;
+    cout << "********************************************************" << endl;
+    cout << "                       MINISQL" << endl;
+    cout << "********************************************************" << endl;
     while (1)
     {
         try
         {
-            cout << "********************************************************" << endl;
-            cout << "                       MINISQL" << endl;
-            cout << "********************************************************" << endl;
             cout << "Enter your SQL statement  " << endl;
             interpreter.getQuery();
+            start = chrono::steady_clock::now();
             interpreter.EXEC();
+            end = chrono::steady_clock::now();
+            std::chrono::duration<double, std::micro> elapsed = end - start;
+            cout << "It takes : "<< (double)elapsed.count()/ 1000000 << " seconds! "<< endl;
         }
         catch (table_exist error) {
             std::cout << ">>> Error: Table has existed!" << std::endl;

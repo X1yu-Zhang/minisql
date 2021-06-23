@@ -137,15 +137,16 @@ vector<Tuple> RecordManager :: SelectRecord( Table &t, vector < string > &Attrib
         }
     }
     if ( no_index ){
-        for( Block * tmp = bm.GetBlockHead(file) ; !tmp->IsEnd() ; tmp = bm.GetNextBlock(file , tmp ) ){
+        for( Block * tmp = bm.GetBlockHead(file) ; 1 ; tmp = bm.GetNextBlock(file , tmp ) ){
             char * data = tmp->GetContent();
-            for(int i = 0 ; i + t.GetLength() < BLOCK_SIZE ; i += t.GetLength()+1 ){
+            for(int i = 0 ; i + t.GetLength() < tmp->GetUsingSize() ; i += t.GetLength()+1 ){
                 if( *(data+i) == 1 ) continue;
                 Tuple tempTuple = ConverseIntoTuple( data + i + 1 , & t.attr_ );
                 if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
                     ret.push_back(tempTuple);
                 }
             }
+            if( tmp->IsEnd() ) break;
         } 
     }else if ( !ret.size() ){
         for( int i = 0 ; i < ret.size() ; i ++ ){
@@ -187,17 +188,6 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
     int cnt = 0;
     if( SearchIndex != -1 ){
         vector <Search_Info> Fetch;
-//        Index_Where<KeyType> condi;
-//        if( where[SearchIndex].data.type == -1 ){
-//            condi.relation_character = where[SearchIndex].relation_character;
-//            condi.data = where[SearchIndex].data.datai;
-//        }else if(where[SearchIndex].data.type == 0 ){
-//            condi.relation_character = where[SearchIndex].relation_character;
-//            condi.data = where[SearchIndex].data.dataf;
-//        }else{
-//            condi.relation_character = where[SearchIndex].relation_character;
-//            condi.data = where[SearchIndex].data.dataf;
-//        }
         Fetch = im.Search_In_Index( Index_name, where[SearchIndex] );
         if ( Fetch.size() ){
             for( int i = 0 ;i < Fetch.size() ; i++ ){
@@ -219,8 +209,8 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
             }
         }
     }else{
-        for( Block * tmp = bm.GetBlockHead(file) ; !tmp->IsEnd() ; tmp = bm.GetNextBlock(file , tmp ) ){
-            for(int i = 0 ; i + t.GetLength() < BLOCK_SIZE ; i += t.GetLength()+1 ){
+        for( Block * tmp = bm.GetBlockHead(file) ; 1 ; tmp = bm.GetNextBlock(file , tmp ) ){
+            for(int i = 0 ; i + t.GetLength() < tmp->GetUsingSize() ; i += t.GetLength()+1 ){
                 Tuple tempTuple = ConverseIntoTuple( tmp->GetContent() + 1 , & t.attr_ );
                 if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
                     char DeletedFlag = 1;
@@ -230,6 +220,7 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
                     cnt ++ ;
                 }
             }
+            if( tmp->IsEnd() ) break;
         } 
     }
     return cnt;
@@ -282,7 +273,9 @@ bool RecordManager :: CheckUnique( Table & t , Tuple & tuple, bool flag ){
     return ret;
 }
 int RecordManager :: InsertRecord( Table &t , Tuple& tuple ){
-    if( !CheckUnique( t , tuple ) )  return 0;
+    if( !CheckUnique( t , tuple ) ) {
+        throw unique_conflict();
+    }
     File * file = bm.GetFile( t.getTitle(),0 );
     string data("\0",1);
     for( int i = 0 ; i < tuple.getData().size(); i++ ){
