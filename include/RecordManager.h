@@ -19,6 +19,7 @@ public:
     bool RecordConditionFit(Tuple &t , vector < int > &AttributeName ,vector<Where>& where);
     vector <Tuple> SelectRecord( Table &t, vector < string > &AttributeName ,vector<Where>& where );
     vector <Tuple> SelectRecord( Table &t );
+
     vector <Tuple> SelectWithIndex(Table &t , File * file , string Index_name , Where where);
     bool CheckUnique( Table & t , Tuple & tuple, bool flag = false );
     void CreateIndex( Table &t , string AttrName , string index_name  );

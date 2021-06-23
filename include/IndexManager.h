@@ -36,10 +36,7 @@ public:
     bool Create_Index(string IndexName,int KeySize,string KeyType);//创建一个新的Index(使用时应该先检查)
 
     bool Insert_Into_Index(string IndexName,string KeyValue,string KeyType,int block_offset,int offset_in_block);
-
-    template<class KeyType>
-    vector<Search_Info> Search_In_Index(string IndexName,Index_Where<KeyType> query);
-    vector<Search_Info> Search_In_Index(string IndexName,where query);
+    vector<Search_Info> Search_In_Index(string IndexName,Where query);
     bool Delete_From_Index(string IndexName,string KeyValue);//删除Index的某个键值
     bool Drop_Index(string IndexName);//删除整个Index (包括IndexSet中的对应元素 和 Index文件)
 

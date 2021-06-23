@@ -1,4 +1,4 @@
-#include "../include/RecordManager.h"
+#include "RecordManager.h"
 
 Data ConverseIntoData( char * data, int type ){ 
     Data ret;
@@ -35,8 +35,20 @@ string Data2String( Data d ){
     }
     return "";
 }
+
 vector<Tuple> RecordManager :: SelectWithIndex( Table &t ,File * file , string Index_name , Where where){
     vector <Tuple> ret;
+//    Index_Where<KeyType> condi;
+//    if(where.data.type==-1){
+//        condi.relation_character=where.relation_character;
+//        condi.data=where.data.datai;
+//    }else if(where.data.type==0){
+//        condi.relation_character=where.relation_character;
+//        condi.data=where.data.dataf;
+//    }else{
+//        condi.relation_character=where.relation_character;
+//        condi.data=where.data.datas;
+//    }
     vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where);
     if( Fetch.size() == 0 ) return ret;
     int size = t.GetLength();
@@ -175,22 +187,18 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
     int cnt = 0;
     if( SearchIndex != -1 ){
         vector <Search_Info> Fetch;
-        if( where[SearchIndex].data.type == -1 ){
-            Index_Where<int> condi;
-            condi.relation_character = where[SearchIndex].relation_character;
-            condi.data = where[SearchIndex].data.datai;
-            Fetch = im.Search_In_Index( Index_name, condi );
-        }else if(where[SearchIndex].data.type == 0 ){
-            Index_Where<float> condi;
-            condi.relation_character = where[SearchIndex].relation_character;
-            condi.data = where[SearchIndex].data.dataf;
-            Fetch = im.Search_In_Index( Index_name, condi );
-        }else{
-            Index_Where<string> condi;
-            condi.relation_character = where[SearchIndex].relation_character;
-            condi.data = where[SearchIndex].data.dataf;
-            Fetch = im.Search_In_Index( Index_name, condi );
-        }
+//        Index_Where<KeyType> condi;
+//        if( where[SearchIndex].data.type == -1 ){
+//            condi.relation_character = where[SearchIndex].relation_character;
+//            condi.data = where[SearchIndex].data.datai;
+//        }else if(where[SearchIndex].data.type == 0 ){
+//            condi.relation_character = where[SearchIndex].relation_character;
+//            condi.data = where[SearchIndex].data.dataf;
+//        }else{
+//            condi.relation_character = where[SearchIndex].relation_character;
+//            condi.data = where[SearchIndex].data.dataf;
+//        }
+        Fetch = im.Search_In_Index( Index_name, where[SearchIndex] );
         if ( Fetch.size() ){
             for( int i = 0 ;i < Fetch.size() ; i++ ){
                 Block * tmp = bm.GetBlockByNum( file , Fetch[i].Block_Offset );
