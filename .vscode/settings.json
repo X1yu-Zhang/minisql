@@ -2,7 +2,10 @@
     "files.associations": {
         "*.m": "matlab",
         "iosfwd": "cpp",
+        "ostream": "cpp",
         "*.tcc": "cpp",
-        "fstream": "cpp"
-    }
+        "compare": "cpp",
+        "type_traits": "cpp"
+    },
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

@@ -1,0 +1,12 @@
+# ninja log v5
+14	1249	6461447846756850	CMakeFiles/minisql.dir/src/File.cpp.obj	e0f1a04f0448cb61
+1	1481	6461447849023598	CMakeFiles/minisql.dir/src/Block.cpp.obj	e39638609e752bc8
+12	2064	6461459129561740	CMakeFiles/minisql.dir/src/main.cpp.obj	2a9592cd51bf748f
+17	1325	6461447847546865	CMakeFiles/minisql.dir/src/buffermanager.cpp.obj	c8fd06fa2b06dc48
+1253	2441	6461447858913743	CMakeFiles/minisql.dir/src/tuple.cpp.obj	3a2b22cf270cc970
+15	2541	6461459134338041	CMakeFiles/minisql.dir/src/interpreter.cpp.obj	f7e5063c5918e7
+4	2373	6461459132641772	CMakeFiles/minisql.dir/src/API.cpp.obj	a59d7205e20b5b41
+6	2633	6461447860893738	CMakeFiles/minisql.dir/src/CatalogManager.cpp.obj	729b8c9f271c3dd2
+24	2716	6461447861733726	CMakeFiles/minisql.dir/src/table.cpp.obj	d014f12e3f16ff70
+8	2543	6461459134358046	CMakeFiles/minisql.dir/src/IndexManager.cpp.obj	44bf2873f6249c0e
+10	2818	6461459137118487	CMakeFiles/minisql.dir/src/RecordManager.cpp.obj	6611b01c77e52910
