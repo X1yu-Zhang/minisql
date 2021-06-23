@@ -1,12 +1,12 @@
 ﻿#include <iostream>
-#include "interpreter.h"
-#include "CatalogManager.h"
-#include "API.h"
-#include "RecordManager.h"
-#include "buffermanager.h"
-#include "IndexManager.h"
-#include "tuple.h"
-#include "table.h"
+#include "../include/interpreter.h"
+#include "../include/CatalogManager.h"
+#include "../include/API.h"
+#include "../include/RecordManager.h"
+#include "../include/buffermanager.h"
+#include "../include/IndexManager.h"
+#include "../include/tuple.h"
+#include "../include/table.h"
 
 int main()
 {

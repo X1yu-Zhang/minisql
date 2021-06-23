@@ -1,4 +1,4 @@
-#include "BufferManager.h"
+#include "../include/BufferManager.h"
 File * BufferManager :: GetFile( string table_name, int type ){
     File * ret = NULL;
     File * tail = NULL;

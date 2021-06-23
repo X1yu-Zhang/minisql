@@ -1,4 +1,4 @@
-#include "table.h"
+#include "../include/table.h"
 Table::Table(string title, Attribute attr) {
     this->title_ = title;
     this->attr_ = attr;

@@ -1,4 +1,4 @@
-#include "tuple.h"
+#include "../include/tuple.h"
 
 Tuple::Tuple(const Tuple& tuple_in) {
     for (int index = 0; index < tuple_in.data_.size(); index++)

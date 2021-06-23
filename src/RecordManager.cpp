@@ -1,4 +1,4 @@
-#include "RecordManager.h"
+#include "../include/RecordManager.h"
 
 Data ConverseIntoData( char * data, int type ){ 
     Data ret;

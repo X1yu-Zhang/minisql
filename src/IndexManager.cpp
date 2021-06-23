@@ -2,7 +2,7 @@
 // Created by 11314 on 2021/6/18.
 //
 #include <iostream>
-#include "IndexManager.h"
+#include "../include/IndexManager.h"
 #include "string"
 #include <sstream>
 using namespace std;
