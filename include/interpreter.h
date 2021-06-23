@@ -31,7 +31,9 @@ private:
 	string getWord(int pos, int& end_pos);//���ص���
 	string getLower(string s, int p);//��Сд������ʶ��
 	void Normalize();
+
 	void EXEC_SELECT();
+
 	void EXEC_DROP_TABLE();
 	void EXEC_DROP_INDEX();
 	void EXEC_CREATE_TABLE();
