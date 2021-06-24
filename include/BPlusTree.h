@@ -290,6 +290,7 @@ vector<Search_Info> Node_Search(Node<KeyType>* Tree,Index_Where<KeyType> query){
                         Search_Info temp_result;
                         temp_result.Block_Offset=temp->Info[j].Block_Offset;
                         temp_result.Offset_in_Block=temp->Info[j].Offset_in_Block;
+                        // cout << "Key Value " << temp->Info[j].KeyValue << endl;
                         result.push_back(temp_result);//小于则插入到result
                     }
                 }

@@ -283,7 +283,8 @@ int RecordManager :: InsertRecord( Table &t , Tuple& tuple ){
         while( !tmp->IsEnd() ) tmp = bm.GetNextBlock( file , tmp );
         if( tmp->GetUsingSize() + t.GetLength() + 1 > BLOCK_SIZE){
             tmp->SetUsingSize(BLOCK_SIZE);
-            Block * nxt = bm.GetBlock( file , nxt) ;
+            Block * nxt = bm.GetEmptyBlock( file ) ;
+            tmp->SetNext( nxt );
             nxt->SetEnd( true );
             nxt->SetOffsetNum( tmp->GetBlockOffsetNum() + 1 );
             tmp->SetEnd( false );

@@ -249,13 +249,48 @@ void Interpreter::EXEC_FILE() {
     tmp_query = ss.str();
     check_index = 0;
     do {
-        while (tmp_query[check_index] != '\n')
+        try{
+            while (tmp_query[check_index] != '\n')
+                check_index++;
+            query = tmp_query.substr(start_index, check_index - start_index);
             check_index++;
-        query = tmp_query.substr(start_index, check_index - start_index);
-        check_index++;
-        start_index = check_index;
-        Normalize();
-        EXEC();
+            start_index = check_index;
+            Normalize();
+            EXEC();
+        }
+        catch (table_exist error) {
+            std::cout << ">>> Error: Table has existed!" << std::endl;
+        }
+        catch (table_not_exist error) {
+            std::cout << ">>> Error: Table not exist!" << std::endl;
+        }
+        catch (attribute_not_exist error) {
+            std::cout << ">>> Error: Attribute not exist!" << std::endl;
+        }
+        catch (index_exist error) {
+            std::cout << ">>> Error: Index has existed!" << std::endl;
+        }
+        catch (index_not_exist error) {
+            std::cout << ">>> Error: Index not existed!" << std::endl;
+        }
+        catch (tuple_type_conflict error) {
+            std::cout << ">>> Error: Tuple type conflict!" << std::endl;
+        }
+        catch (primary_key_conflict error) {
+            std::cout << ">>> Error: Primary key conflict!" << std::endl;
+        }
+        catch (data_type_conflict error) {
+            std::cout << ">>> Error: data type conflict!" << std::endl;
+        }
+        catch (index_full error) {
+            std::cout << ">>> Error: Index full!" << std::endl;
+        }
+        catch (unique_conflict error) {
+            std::cout << ">>> Error: unique conflict!" << std::endl;
+        }
+        catch ( input_format_error error ) {
+            std::cout << ">>> Error: Input format error!" << std::endl;
+        }
     } while (tmp_query[check_index] != '\0');
 }
 
