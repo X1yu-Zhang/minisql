@@ -282,9 +282,9 @@ vector<Search_Info> Node_Search(Node<KeyType>* Tree,Index_Where<KeyType> query){
                     for(int j=temp->Info.size()-1;j>=0;j--){
                         if(temp->Info[j].KeyValue<=KeyValue){
                             reverse(result.begin(), result.end());
-                            for(int k=0;k<result.size();k++){
-                                cout<<"result:"<<result[k].Block_Offset<<" "<<result[k].Offset_in_Block<<endl;
-                            }
+                            // for(int k=0;k<result.size();k++){
+                            //     cout<<"result:"<<result[k].Block_Offset<<" "<<result[k].Offset_in_Block<<endl;
+                            // }
                             return result;
                         }
                         Search_Info temp_result;
@@ -294,9 +294,9 @@ vector<Search_Info> Node_Search(Node<KeyType>* Tree,Index_Where<KeyType> query){
                     }
                 }
                 reverse(result.begin(), result.end());
-                for(int i=0;i<result.size();i++){
-                    cout<<"result:"<<result[i].Block_Offset<<" "<<result[i].Offset_in_Block<<endl;
-                }
+                // for(int i=0;i<result.size();i++){
+                //     cout<<"result:"<<result[i].Block_Offset<<" "<<result[i].Offset_in_Block<<endl;
+                // }
                 return result;
             }
         }
@@ -398,7 +398,7 @@ void UpdateFathers(Node<KeyType>* father,Node<KeyType>* son){//用于更新非�
 
 template<class KeyType>
 Node<KeyType>* Node_Insert(Node<KeyType>* Tree, KeyType KeyValue,int Block_Offset,int Offset_in_Block){
-    cout << KeyValue <<" "<<Block_Offset<<" "<<Offset_in_Block<<endl; 
+    // cout << KeyValue <<" "<<Block_Offset<<" "<<Offset_in_Block<<endl; 
     Node<KeyType> *temp_node=Tree;
     vector<Node<KeyType>* > PARENTS;
     PARENTS.push_back(NULL);//第一个是NULL
@@ -443,9 +443,9 @@ Node<KeyType>* Node_Insert(Node<KeyType>* Tree, KeyType KeyValue,int Block_Offse
             parent=PARENTS.back();
             PARENTS.pop_back();
         }
-        for(int i=0;i<Tree->Info.size();i++){
-            cout << i <<":"<<Tree->Info[i].KeyValue <<" "<<Tree->Info[i].Block_Offset<<" "<<Tree->Info[i].Offset_in_Block<<endl; 
-        }
+        // for(int i=0;i<Tree->Info.size();i++){
+        //     cout << i <<":"<<Tree->Info[i].KeyValue <<" "<<Tree->Info[i].Block_Offset<<" "<<Tree->Info[i].Offset_in_Block<<endl; 
+        // }
 //更新父结点key值
         return Tree;
     }else{//叶子结点容量到达上限
@@ -618,7 +618,7 @@ Node<KeyType>* Node_Delete(Node<KeyType>* Tree,KeyType KeyValue){
     //cout<<"parent"<<endl;
     //Node_print(parent);
     PARENTS.pop_back();
-    cout<<degree/2<<endl;
+    // cout<<degree/2<<endl;
     if(temp_node->Info.size()>=(degree/2) || parent==NULL){//叶子结点数量够多或者是根节点 都不用修改叶子结点
         while(parent){
             //cout<<"check";
@@ -628,7 +628,7 @@ Node<KeyType>* Node_Delete(Node<KeyType>* Tree,KeyType KeyValue){
             parent=PARENTS.back();
             PARENTS.pop_back();
         }
-        cout<<"Tree"<<endl;
+        // cout<<"Tree"<<endl;
         //Node_print(Tree);
         return temp_node;
     }else{//叶子结点数量不够多且不是根节点,需要修改
@@ -749,7 +749,7 @@ Node<KeyType>* Node_Delete(Node<KeyType>* Tree,KeyType KeyValue){
                             node3=parent->pre;
                             node4=parent;
                         }//node3和node4是用于调整的两个结点 拥有同一个父结点 不需要再做一遍删除 注意父结点指针的分配
-                        cout<<"Parent_Node_check"<<endl;
+                        // cout<<"Parent_Node_check"<<endl;
 //                        Node_print(node3);
 //                        Node_print(node4);
                         if(node3->childs.size()+node4->childs.size()>=degree+2){//node3和node4不合并

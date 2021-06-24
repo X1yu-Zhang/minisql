@@ -59,3 +59,14 @@
 47	2568	6462593854102901	CMakeFiles/minisql.dir/src/RecordManager.cpp.obj	6611b01c77e52910
 41	2736	6462593855772894	CMakeFiles/minisql.dir/src/IndexManager.cpp.obj	44bf2873f6249c0e
 5	1258	6462594340166117	../minisql.exe	5ccf15a13bd57f4
+4	1514	6462595928255264	CMakeFiles/minisql.dir/src/RecordManager.cpp.obj	6611b01c77e52910
+1515	2821	6462595941190100	../minisql.exe	5ccf15a13bd57f4
+5	1500	6462596999040593	CMakeFiles/minisql.dir/src/RecordManager.cpp.obj	6611b01c77e52910
+5	1311	6462597043473244	../minisql.exe	5ccf15a13bd57f4
+37	1776	6462599326011568	CMakeFiles/minisql.dir/src/main.cpp.obj	2a9592cd51bf748f
+4	2117	6462599329690027	CMakeFiles/minisql.dir/src/API.cpp.obj	a59d7205e20b5b41
+30	2284	6462599331399987	CMakeFiles/minisql.dir/src/interpreter.cpp.obj	f7e5063c5918e7
+27	2401	6462599332569999	CMakeFiles/minisql.dir/src/CatalogManager.cpp.obj	729b8c9f271c3dd2
+34	2710	6462599335659976	CMakeFiles/minisql.dir/src/RecordManager.cpp.obj	6611b01c77e52910
+40	2881	6462599337383421	CMakeFiles/minisql.dir/src/IndexManager.cpp.obj	44bf2873f6249c0e
+2882	4080	6462599349292768	../minisql.exe	5ccf15a13bd57f4

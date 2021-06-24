@@ -179,8 +179,6 @@ bool IndexManager::Create_Index(string IndexName,int KeySize,string KeyType){
 bool IndexManager::Insert_Into_Index(string IndexName,string KeyValue,string KeyType,int block_offset,int offset_in_block){
     if (IndexSet.find(IndexName) == IndexSet.end())return false;//不存在这个Index
     if(KeyType=="int"){
-        cout << "KeyValue : ";
-        cout << *(int*)(KeyValue.c_str()) << endl;
         IndexSet[IndexName].Int_Root = Node_Insert<int>(IndexSet[IndexName].Int_Root,*(int*)(KeyValue.c_str()),block_offset,offset_in_block);
         return true;
     }else if(KeyType=="float"){
@@ -201,9 +199,6 @@ vector<Search_Info> IndexManager::Search_In_Index(string IndexName, Where query)
         Condi.data = query.data.datai;
         Condi.relation_character = query.relation_character;
         ret = Node_Search( root , Condi);
-        for( int i = 0 ; i < ret.size() ; i ++ ){
-            cout << "Ret " << ret[i].Block_Offset << " " << ret[i].Offset_in_Block << endl;
-        }
     }else if( query.data.type == 0 ){
         Index_Where<float>Condi ;
         Node<float> *root=IndexSet[IndexName].Float_Root;

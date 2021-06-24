@@ -44,12 +44,11 @@ vector<Tuple> RecordManager :: SelectWithIndex( Table &t ,File * file , string I
     int size = t.GetLength();
     for( int i = 0 ; i < Fetch.size() ; i ++ ){
         Tuple tp;
-        cout <<  "Fetch :" ;
-        cout << Fetch[i].Block_Offset << " " << Fetch[i].Block_Offset << endl;
         Block * tmp = bm.GetBlockByNum(file , Fetch[i].Block_Offset);
         char * data = tmp->GetContent();
         data += Fetch[i].Offset_in_Block;
         if( *data == 0 ){
+            data += 1;
             for( int i = 0; i < t.attr_.num ; i ++  ){
                 tp.addData( ConverseIntoData( data ,t.attr_.type[i] ) );
                 data += ( t.attr_.type[i] < 1 ) ?  4 : t.attr_.type[i];
@@ -158,7 +157,6 @@ vector<Tuple> RecordManager :: SelectRecord( Table &t, vector < string > &Attrib
             break;
         }
     }
-
     if ( no_index ){
         for( Block * tmp = bm.GetBlockHead(file) ; 1 ; tmp = bm.GetNextBlock(file , tmp ) ){
             char * data = tmp->GetContent();

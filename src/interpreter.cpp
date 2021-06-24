@@ -49,7 +49,7 @@ void Interpreter::Normalize()
         }
     }
    
-    trim(query);
+    query = trim(query);
     query = getLower(query, 0);
 }
 
