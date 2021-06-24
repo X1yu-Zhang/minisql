@@ -44,16 +44,6 @@ string
 File.h
 /mnt/d/PROGRAM/cpp/db/include/File.h
 
-/mnt/d/PROGRAM/cpp/db/include/BufferManager.h
-string
--
-iostream
--
-File.h
-/mnt/d/PROGRAM/cpp/db/include/File.h
-Block.h
-/mnt/d/PROGRAM/cpp/db/include/Block.h
-
 /mnt/d/PROGRAM/cpp/db/include/CatalogManager.h
 string
 -
@@ -168,35 +158,13 @@ vector
 iterator
 -
 
-/mnt/d/PROGRAM/cpp/db/src/Block.cpp
-../include/Block.h
-/mnt/d/PROGRAM/cpp/db/include/Block.h
-
 /mnt/d/PROGRAM/cpp/db/src/CatalogManager.cpp
 ../include/CatalogManager.h
 /mnt/d/PROGRAM/cpp/db/include/CatalogManager.h
 
-/mnt/d/PROGRAM/cpp/db/src/File.cpp
-../include/File.h
-/mnt/d/PROGRAM/cpp/db/include/File.h
-
-/mnt/d/PROGRAM/cpp/db/src/IndexManager.cpp
-iostream
--
-../include/IndexManager.h
-/mnt/d/PROGRAM/cpp/db/include/IndexManager.h
-string
-/mnt/d/PROGRAM/cpp/db/src/string
-sstream
--
-
 /mnt/d/PROGRAM/cpp/db/src/RecordManager.cpp
 ../include/RecordManager.h
 /mnt/d/PROGRAM/cpp/db/include/RecordManager.h
-
-/mnt/d/PROGRAM/cpp/db/src/buffermanager.cpp
-../include/BufferManager.h
-/mnt/d/PROGRAM/cpp/db/include/BufferManager.h
 
 /mnt/d/PROGRAM/cpp/db/src/interpreter.cpp
 ../include/interpreter.h
@@ -229,8 +197,4 @@ chrono
 /mnt/d/PROGRAM/cpp/db/src/table.cpp
 ../include/table.h
 /mnt/d/PROGRAM/cpp/db/include/table.h
-
-/mnt/d/PROGRAM/cpp/db/src/tuple.cpp
-../include/tuple.h
-/mnt/d/PROGRAM/cpp/db/include/tuple.h
 

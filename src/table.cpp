@@ -24,26 +24,34 @@ void Table :: ReadUnique(){
     int cnt = 0;
     for(int i = 0 ; i < this->attr_.num ; i ++ ){
         if ( this->attr_.unique[i] || i == this->attr_.primary_key ){
-            fstream file("./data/catalog/Unique/"+ this->getTitle() + "_"+ this->attr_.name[i]+".db", ios::in);
-            while( file.is_open() ){
-                unordered_set<string> & AttrUnique = Unique[this->attr_.name[i]];
+            fstream file("./data/catalog/Unique/"+ this->getTitle() + "_"+ this->attr_.name[i]+".db", ios::in | ios::binary);
+            if( !file.is_open() ) continue; 
+            unordered_set<string> & AttrUnique = Unique[this->attr_.name[i]];
+            while( 1 ){
                 int length = this->attr_.type[i] < 1 ? 4 : this->attr_.type[i]; 
-                char data[length+1];
+                char data[length]; 
                 file.read( data , length );
                 if( file.eof() ) break;
+                cnt++;
                 string tmp( data , length );
                 AttrUnique.insert( tmp );
             }
+            cout << AttrUnique.size() <<endl;
             file.close();
         }
     }
 }
 void Table :: WriteUnique(){
-    map<string, unordered_set<string>> :: iterator ITOR ;
-    for( ITOR = Unique.begin() ; ITOR != Unique.end(); ITOR ++ ){
-        fstream file("./data/catalog/Unique/"+ this->getTitle() + "_"+ ITOR->first +".db",ios::out | ios :: binary);
-        for( unordered_set<string> :: iterator SETITOR = ITOR->second.begin() ; SETITOR != ITOR->second.end(); SETITOR ++ ){
-            file.write( SETITOR->data() , SETITOR->size() );
+    for( int i =0 ; i < attr_.num ; i++ ){
+        if( attr_.primary_key == i || attr_.unique[i]){
+            unordered_set<string>&tmp = Unique[attr_.name[i]];
+            fstream file("./data/catalog/Unique/"+ this->getTitle() + "_"+ attr_.name[i] +".db",ios::out | ios :: binary);
+            for( unordered_set<string> :: iterator SETITOR = tmp.begin() ; SETITOR != tmp.end(); SETITOR ++ ){
+                file.write( SETITOR->data() , SETITOR->size() );
+            }
+            
+            cout<<tmp.size() << endl;
+            file.close();
         }
     }
 }
@@ -113,5 +121,20 @@ void Table :: ShowTableInfo(){
     cout << "AttrNum : " << n << " " << "Primary key Index" << " " << attr_.primary_key << endl;
     for(int i = 0 ;i < n ; i++ ){
         cout << attr_.name[i] << " "<<attr_.type[i] << " " <<attr_.has_index[i] << " " << endl;
+    }
+}
+void Table :: ShowUnique( string name , int type ){
+    unordered_set < string > & tmp = Unique[name];
+    unordered_set<string>::iterator itor ;
+    for( itor = tmp.begin() ; itor != tmp.end() ; itor ++ ){
+
+        if( type == -1 ){
+            cout << *(int*)(itor->data()) << endl;
+        }else if( type == 0 ){
+            cout << *(float*)(itor->data())<<endl;
+        }else{
+            cout << itor->data() << endl;
+        }
+
     }
 }

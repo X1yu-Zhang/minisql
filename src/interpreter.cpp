@@ -523,6 +523,7 @@ void Interpreter::EXEC_CREATE_TABLE() {
                 {
                     primary = j;
                     attr_.index_name[j] = table_name + "_Primary.db";
+                    attr_.has_index[j] = 1;
                     break;
                 }
             check_index += 2;

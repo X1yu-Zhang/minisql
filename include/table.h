@@ -34,6 +34,7 @@ public:
     void ShowTableInfo();
     void ReadUnique();
     void WriteUnique();
+    void ShowUnique( string name , int type );
 };
 
 #endif

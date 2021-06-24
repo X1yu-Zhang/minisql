@@ -48,7 +48,7 @@ bool CatalogManager :: CreateTable( Table & t ){
     if( TABLESET.find(t.getTitle()) != TABLESET.end() ) return false;
     TABLESET.insert( make_pair( t.getTitle() , t ) );
     INDEXSET.insert( make_pair( t.getTitle()+"_Primary", t.getTitle() ));
-    fstream file("./data/record/"+t.getTitle()+".db", ios::out);
+    fstream file("./data/record/"+t.getTitle()+".db", ios::out );
     file.close();
     return true;
 }

@@ -119,6 +119,36 @@ bool  RecordManager :: RecordConditionFit(Tuple &t , vector < int > &AttributeNa
         ret = ret & res;
     } 
     return ret;
+}void RecordManager :: DeleteUnique( Table & t , Tuple & tuple ){
+    CheckUnique( t , tuple , true ); 
+}
+
+bool RecordManager :: CheckUnique( Table & t , Tuple & tuple, bool flag ){
+    bool ret = true;
+    for( int i = 0 ; i < t.attr_.num ; i ++ ){
+        if( t.attr_.unique[i] || i == t.attr_.primary_key ){
+            unordered_set < string > & ValueSet = t.Unique[t.attr_.name[i]] ;
+            string data = Data2String( tuple.getData()[i] );
+            // for( unordered_set<string>::iterator ITOR = ValueSet.begin() ; ITOR != ValueSet.end() ; ITOR++){
+            //     cout <<(int) ITOR->c_str()[0]<<(int) ITOR->c_str()[1] <<(int) ITOR->c_str()[2]<<(int) ITOR->c_str()[3]<<endl;
+            // }
+            // cout <<(int) data.c_str()[0]<<(int) data.c_str()[1] <<(int) data.c_str()[2]<<(int) data.c_str()[3]<<endl;
+            unordered_set < string >  ::iterator SETITOR = ValueSet.find( data );
+            if( flag ){
+                if( SETITOR != ValueSet.end() ){
+                    ValueSet.erase( SETITOR );
+                }
+            }else{
+                if( SETITOR == ValueSet.end() ){
+                    ValueSet.insert( data );
+                }else {
+                    ret = false;
+                    break;
+                }
+            }
+        }
+    }
+    return ret;
 }
 vector<Tuple> RecordManager :: SelectRecord( Table &t, vector < string > &AttributeName ,vector<Where> &where ){
     vector <Tuple> ret;
@@ -136,17 +166,16 @@ vector<Tuple> RecordManager :: SelectRecord( Table &t, vector < string > &Attrib
             break;
         }
     }
+
     if ( no_index ){
         for( Block * tmp = bm.GetBlockHead(file) ; 1 ; tmp = bm.GetNextBlock(file , tmp ) ){
             char * data = tmp->GetContent();
             for(int i = 0 ; i + t.GetLength() < tmp->GetUsingSize() ; i += t.GetLength()+1 ){
                 if( *(data+i) == 1 ) continue;
                 Tuple tempTuple = ConverseIntoTuple( data + i + 1 , & t.attr_ );
-                if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
-                    ret.push_back(tempTuple);
-                }
+                ret.push_back(tempTuple);
             }
-            if( tmp->IsEnd() ) break;
+            if ( tmp->IsEnd() ) break;
         } 
     }else if ( !ret.size() ){
         for( int i = 0 ; i < ret.size() ; i ++ ){
@@ -202,7 +231,7 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
                     }
                     char DeletedFlag = 1;
                     tmp->write( Fetch[i].Offset_in_Block , &DeletedFlag , 1 );
-                    RecordFreeList node = new FreeListNode;
+                    DeleteUnique( t , tempTuple );
                     file->AppendFreeList( Fetch[i].Block_Offset , Fetch[i].Offset_in_Block );
                     cnt ++ ;
                 }
@@ -210,15 +239,16 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
         }
     }else{
         for( Block * tmp = bm.GetBlockHead(file) ; 1 ; tmp = bm.GetNextBlock(file , tmp ) ){
+            char * data = tmp->GetContent();
             for(int i = 0 ; i + t.GetLength() < tmp->GetUsingSize() ; i += t.GetLength()+1 ){
-                Tuple tempTuple = ConverseIntoTuple( tmp->GetContent() + 1 , & t.attr_ );
-                if ( RecordConditionFit( tempTuple , AttrIndex , where ) ){
-                    char DeletedFlag = 1;
-                    tmp->write( i , &DeletedFlag , 1 );
-                    RecordFreeList node = new FreeListNode;
-                    file->AppendFreeList( tmp->GetBlockOffsetNum() , i );
-                    cnt ++ ;
-                }
+                if( *(data+i) == 1 ) continue;
+                Tuple tempTuple = ConverseIntoTuple( data + i + 1 , & t.attr_ );
+                char DeletedFlag = 1;
+                tmp->write( i , &DeletedFlag , 1 );
+                DeleteUnique( t , tempTuple );
+                file->AppendFreeList( tmp->GetBlockOffsetNum() , i );
+                cnt ++ ;
+
             }
             if( tmp->IsEnd() ) break;
         } 
@@ -231,11 +261,12 @@ int RecordManager :: DeleteRecord ( Table & t ){
     int cnt = 0;
     for( Block * tmp = bm.GetBlockHead(file) ; 1 ; tmp = bm.GetNextBlock(file , tmp ) ){
         for(int i = 0 ; i + t.GetLength() < tmp->GetUsingSize() ; i += t.GetLength()+1 ){
+            if( *(tmp->GetContent() + i) == 1 ) continue;
             Tuple tempTuple = ConverseIntoTuple( tmp->GetContent() + 1 + i , & t.attr_ );
             char DeletedFlag = 1;
             tmp->write( i , &DeletedFlag , 1 );
-            file->AppendFreeList( tmp->GetBlockOffsetNum() , i );
             DeleteUnique( t , tempTuple );
+            file->AppendFreeList( tmp->GetBlockOffsetNum() , i );
             cnt ++ ;
         }
         if( tmp->IsEnd() ) break;
@@ -246,32 +277,7 @@ void RecordManager :: DropTable( string TableName){
     File * file = bm.GetFile(TableName , 0);
     bm.DeleteFileFromList( TableName );
 }
-void RecordManager :: DeleteUnique( Table & t , Tuple & tuple ){
-    CheckUnique( t , tuple , true ); 
-}
-bool RecordManager :: CheckUnique( Table & t , Tuple & tuple, bool flag ){
-    bool ret = true;
-    for( int i = 0 ; i < t.attr_.num ; i ++ ){
-        if( t.attr_.unique[i] || i == t.attr_.primary_key ){
-            unordered_set < string > & ValueSet = t.Unique[t.attr_.name[i]] ;
-            string data = Data2String( tuple.getData()[i] );
-            unordered_set < string >  ::iterator SETITOR = ValueSet.find( data );
-            if( flag ){
-                if( SETITOR != ValueSet.end() ){
-                    ValueSet.erase( data );
-                }
-            }else{
-                if( SETITOR == ValueSet.end() ){
-                    ValueSet.insert( data );
-                }else {
-                    ret = false;
-                    break;
-                }
-            }
-        }
-    }
-    return ret;
-}
+
 int RecordManager :: InsertRecord( Table &t , Tuple& tuple ){
     if( !CheckUnique( t , tuple ) ) {
         throw unique_conflict();
@@ -287,8 +293,8 @@ int RecordManager :: InsertRecord( Table &t , Tuple& tuple ){
         while( !tmp->IsEnd() ) tmp = bm.GetNextBlock( file , tmp );
         if( tmp->GetUsingSize() + t.GetLength() + 1 > BLOCK_SIZE){
             tmp->SetUsingSize(BLOCK_SIZE);
-            Block * nxt = bm.GetEmptyBlock( file );
-            tmp->SetNext( nxt );
+            Block * nxt = bm.GetBlock( file , nxt) ;
+            nxt->SetEnd( true );
             nxt->SetOffsetNum( tmp->GetBlockOffsetNum() + 1 );
             tmp->SetEnd( false );
             nxt->SetEnd( true );
