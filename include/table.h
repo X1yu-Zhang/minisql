@@ -27,7 +27,7 @@ public:
     void SetTitle( string name );
     string getTitle();
     short gethasKey();//?????????????????????
-    int HasAttribute( string name );
+    bool HasAttribute( string name );
     friend istream& operator>>( istream & in , Table & t); 
     friend ostream& operator<<( ostream & out , const Table & t);
     vector<int >ConvertIntoIndex( const vector<string> AttrName );

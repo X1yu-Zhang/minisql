@@ -8,7 +8,7 @@
 #include "IndexManager.h"
 class API {
 public:
-	API(RecordManager &rm, CatalogManager &cm):record(rm),catalog(cm){};
+	API(RecordManager &rm, CatalogManager &cm ,IndexManager &im):record(rm),catalog(cm),indexm(im){};
 	~API();
 	void selectRecord(string table_name, vector<string> DispAttr ,vector<string> target_attr, vector<Where> where);
 	void deleteRecord(string table_name, vector<string> target_attr, vector<Where> where);
@@ -21,7 +21,7 @@ public:
 private:
 	RecordManager &record;
 	CatalogManager &catalog;
-	// IndexManager & im;
+	IndexManager & indexm;
 };
 
 

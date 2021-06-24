@@ -38,22 +38,14 @@ string Data2String( Data d ){
 
 vector<Tuple> RecordManager :: SelectWithIndex( Table &t ,File * file , string Index_name , Where where){
     vector <Tuple> ret;
-//    Index_Where<KeyType> condi;
-//    if(where.data.type==-1){
-//        condi.relation_character=where.relation_character;
-//        condi.data=where.data.datai;
-//    }else if(where.data.type==0){
-//        condi.relation_character=where.relation_character;
-//        condi.data=where.data.dataf;
-//    }else{
-//        condi.relation_character=where.relation_character;
-//        condi.data=where.data.datas;
-//    }
-    vector <Search_Info> Fetch = im.Search_In_Index( Index_name, where);
+    vector <Search_Info> Fetch;
+    Fetch = im.Search_In_Index( Index_name, where);
     if( Fetch.size() == 0 ) return ret;
     int size = t.GetLength();
     for( int i = 0 ; i < Fetch.size() ; i ++ ){
         Tuple tp;
+        cout <<  "Fetch :" ;
+        cout << Fetch[i].Block_Offset << " " << Fetch[i].Block_Offset << endl;
         Block * tmp = bm.GetBlockByNum(file , Fetch[i].Block_Offset);
         char * data = tmp->GetContent();
         data += Fetch[i].Offset_in_Block;
@@ -335,18 +327,14 @@ void RecordManager :: CreateIndex( Table &t , string AttrName , string index_nam
     else KeyType = "string"; 
     im.Create_Index( index_name ,KeySize , KeyType);
     File * file = bm.GetFile( t.getTitle() , 0);
-    int offset = 1;
-    for(int i = 0 ; i < index ; i ++ ){
-        offset += t.attr_.type[i] < 1 ? 4 : t.attr_.type[i];
-    } 
-    int RecordSize = t.GetLength();
-    for( Block * tmp = bm.GetBlockHead(file) ;tmp ; tmp = bm.GetNextBlock( file , tmp)){
+    for( Block * tmp = bm.GetBlockHead(file) ;1 ; tmp = bm.GetNextBlock( file , tmp)){
         char* data = tmp->GetContent();
-        for(int i = 0 ; i + RecordSize < BLOCK_SIZE ; i += RecordSize + 1){
+        for(int i = 0 ; i + t.GetLength() < tmp->GetUsingSize() ; i += t.GetLength() + 1){
             if( *(data+i) == 1 ) continue;
             string KeyValue( data + i + 1 , KeySize);
             im.Insert_Into_Index( index_name , KeyValue , KeyType , tmp->GetBlockOffsetNum() , i);
         }
+        if( tmp->IsEnd() )break;
     }
 }
 

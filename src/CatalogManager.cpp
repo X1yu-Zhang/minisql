@@ -1,5 +1,5 @@
 #include "../include/CatalogManager.h"
-CatalogManager :: CatalogManager(){
+CatalogManager :: CatalogManager(IndexManager &i):im(i){
     fstream f1("./data/catalog/tablenameset.db",ios::in);
     fstream f2("./data/catalog/indexnameset.db",ios::in);
     string tmp;
@@ -15,6 +15,17 @@ CatalogManager :: CatalogManager(){
         string name;
         f2 >> name;
         INDEXSET.insert(make_pair(tmp,name));
+        Table & t = TABLESET[name];
+        for(int i = 0 ; i < t.attr_.num ; i ++ ){
+            if( t.attr_.index_name[i] == tmp ){
+                string KeyType;
+                if( t.attr_.type[i] == -1) KeyType = "int";
+                else if ( t.attr_.type[i] == 0 ) KeyType = "float";
+                else KeyType = "string"; 
+                im.Build_BplusTree_From_File(KeyType, t.attr_.type[i] < 1 ? 4 :t.attr_.type[i]  ,tmp);   
+                break;
+            }
+        }
     }
     f1.close();
     f2.close();
@@ -50,6 +61,8 @@ bool CatalogManager :: CreateTable( Table & t ){
     INDEXSET.insert( make_pair( t.getTitle()+"_Primary", t.getTitle() ));
     fstream file("./data/record/"+t.getTitle()+".db", ios::out );
     file.close();
+    fstream f("./data/index/"+t.getTitle()+"_Primary.db", ios::out );
+    f.close();
     return true;
 }
 
@@ -88,7 +101,7 @@ bool CatalogManager :: DeleteIndex( string name ){
     return true;
 }
 bool CatalogManager :: CreateIndex( string name, string table_name, string attr_name  ){
-    if( INDEXSET.find(name) == INDEXSET.end() ) return false;
+    if( INDEXSET.find(name) != INDEXSET.end() ) return false;
     INDEXSET.insert( make_pair( name , table_name ));
     Table &t = GetTable( table_name );
     int index = t.AttrName2Index[attr_name];

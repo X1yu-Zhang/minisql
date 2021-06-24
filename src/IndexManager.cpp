@@ -80,7 +80,6 @@ bool IndexManager:: Build_BplusTree_From_File( string KeyType,int KeySize,string
     temp_index->Float_Root=NULL;
     temp_index->String_Root=NULL;
     temp_index->degree=BLOCK_SIZE/(sizeof(Node<int>*)+2*sizeof(int)+KeySize);
-    IndexSet[IndexName]=*temp_index;
 
     if(KeyType=="int"){
         temp_index->Int_Root=new Node<int>;
@@ -139,12 +138,12 @@ bool IndexManager:: Build_BplusTree_From_File( string KeyType,int KeySize,string
     }else{
         return false;
     }
+    IndexSet[IndexName]=*temp_index;
     return true;
 }
 
 
-bool IndexManager::Create_Index(string IndexName,int KeySize,string KeyType){//done
-    if (IndexSet.find(IndexName) != IndexSet.end())return false;//存在这个Index
+bool IndexManager::Create_Index(string IndexName,int KeySize,string KeyType){
     File* index_file=bm.GetFile(IndexName,1);
     Index *temp_index=new Index;
     temp_index->IndexName=IndexName;
@@ -180,10 +179,12 @@ bool IndexManager::Create_Index(string IndexName,int KeySize,string KeyType){//d
 bool IndexManager::Insert_Into_Index(string IndexName,string KeyValue,string KeyType,int block_offset,int offset_in_block){
     if (IndexSet.find(IndexName) == IndexSet.end())return false;//不存在这个Index
     if(KeyType=="int"){
-        IndexSet[IndexName].Int_Root = Node_Insert<int>(IndexSet[IndexName].Int_Root,*(int*)(&KeyValue),block_offset,offset_in_block);
+        cout << "KeyValue : ";
+        cout << *(int*)(KeyValue.c_str()) << endl;
+        IndexSet[IndexName].Int_Root = Node_Insert<int>(IndexSet[IndexName].Int_Root,*(int*)(KeyValue.c_str()),block_offset,offset_in_block);
         return true;
     }else if(KeyType=="float"){
-        IndexSet[IndexName].Float_Root = Node_Insert<float>(IndexSet[IndexName].Float_Root,*(float*)(&KeyValue),block_offset,offset_in_block);
+        IndexSet[IndexName].Float_Root = Node_Insert<float>(IndexSet[IndexName].Float_Root,*(float*)(KeyValue.c_str()),block_offset,offset_in_block);
         return true;
     }else if(KeyType=="string"){
         IndexSet[IndexName].String_Root = Node_Insert(IndexSet[IndexName].String_Root,KeyValue,block_offset,offset_in_block);
@@ -198,16 +199,22 @@ vector<Search_Info> IndexManager::Search_In_Index(string IndexName, Where query)
         Index_Where<int> Condi ;
         Node<int> *root=IndexSet[IndexName].Int_Root;
         Condi.data = query.data.datai;
+        Condi.relation_character = query.relation_character;
         ret = Node_Search( root , Condi);
+        for( int i = 0 ; i < ret.size() ; i ++ ){
+            cout << "Ret " << ret[i].Block_Offset << " " << ret[i].Offset_in_Block << endl;
+        }
     }else if( query.data.type == 0 ){
         Index_Where<float>Condi ;
         Node<float> *root=IndexSet[IndexName].Float_Root;
         Condi.data = query.data.dataf;
+        Condi.relation_character = query.relation_character;
         ret = Node_Search<float>( root , Condi);
     }else{
         Index_Where<string>Condi ;
         Condi.data = query.data.datas;
         Node<string> *root=IndexSet[IndexName].String_Root;
+        Condi.relation_character = query.relation_character;
         ret = Node_Search<string>( root , Condi);
     }
     return ret;

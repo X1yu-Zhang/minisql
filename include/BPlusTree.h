@@ -98,12 +98,10 @@ vector<Search_Info> Node_Search(Node<KeyType>* Tree,Index_Where<KeyType> query){
         tail=tail->childs[tail->childs.size()-1];
     }
     //head是最头上的node,tail是尾巴上的node
-    Node_print(head->next->pre);
     if(query.relation_character==LESS){
         vector<Node<KeyType>*> node;
         int front=0,rear=0,last=0;
-        int level=0;
-        int isleaf=0;
+        int isleaf = Tree -> isLeaf;
         node.push_back(Tree);
         while(front<=rear){
             if(isleaf==0){//非叶子结点则push
@@ -152,8 +150,7 @@ vector<Search_Info> Node_Search(Node<KeyType>* Tree,Index_Where<KeyType> query){
     }else if(query.relation_character==LESS_OR_EQUAL){
         vector<Node<KeyType>*> node;
         int front=0,rear=0,last=0;
-        int level=0;
-        int isleaf=0;
+        int isleaf = Tree -> isLeaf;
         node.push_back(Tree);
         while(front<=rear){
             if(isleaf==0){//非叶子结点则push
@@ -212,8 +209,7 @@ vector<Search_Info> Node_Search(Node<KeyType>* Tree,Index_Where<KeyType> query){
     }else if(query.relation_character==GREATER_OR_EQUAL){
         vector<Node<KeyType>*> node;
         int front=0,rear=0,last=0;
-        int level=0;
-        int isleaf=0;
+        int isleaf = Tree -> isLeaf;
         node.push_back(Tree);
         while(front<=rear){
             if(isleaf==0){//非叶子结点则push
@@ -229,7 +225,6 @@ vector<Search_Info> Node_Search(Node<KeyType>* Tree,Index_Where<KeyType> query){
                 front=rear+1;
                 rear=last;
             }else{
-                int start=0;
                 for(int i=front;i<=rear;i++){//结果输入给result
                     Node<KeyType> *temp=node[i];
                     for(int j=temp->Info.size()-1;j>=0;j--){
@@ -266,8 +261,7 @@ vector<Search_Info> Node_Search(Node<KeyType>* Tree,Index_Where<KeyType> query){
     }else if(query.relation_character==GREATER){
         vector<Node<KeyType>*> node;
         int front=0,rear=0,last=0;
-        int level=0;
-        int isleaf=0;
+        int isleaf = Tree -> isLeaf;
         node.push_back(Tree);
         while(front<=rear){
             if(isleaf==0){//非叶子结点则push
@@ -283,21 +277,26 @@ vector<Search_Info> Node_Search(Node<KeyType>* Tree,Index_Where<KeyType> query){
                 front=rear+1;
                 rear=last;
             }else{
-                int start=0;
                 for(int i=front;i<=rear;i++){//结果输入给result
                     Node<KeyType> *temp=node[i];
                     for(int j=temp->Info.size()-1;j>=0;j--){
                         if(temp->Info[j].KeyValue<=KeyValue){
                             reverse(result.begin(), result.end());
+                            for(int k=0;k<result.size();k++){
+                                cout<<"result:"<<result[k].Block_Offset<<" "<<result[k].Offset_in_Block<<endl;
+                            }
                             return result;
                         }
-                        Search_Info temp_result=*(new Search_Info);
+                        Search_Info temp_result;
                         temp_result.Block_Offset=temp->Info[j].Block_Offset;
                         temp_result.Offset_in_Block=temp->Info[j].Offset_in_Block;
                         result.push_back(temp_result);//小于则插入到result
                     }
                 }
                 reverse(result.begin(), result.end());
+                for(int i=0;i<result.size();i++){
+                    cout<<"result:"<<result[i].Block_Offset<<" "<<result[i].Offset_in_Block<<endl;
+                }
                 return result;
             }
         }
@@ -320,8 +319,7 @@ vector<Search_Info> Node_Search(Node<KeyType>* Tree,Index_Where<KeyType> query){
     }else if(query.relation_character==NOT_EQUAL){
         vector<Node<KeyType>*> node;
         int front=0,rear=0,last=0;
-        int level=0;
-        int isleaf=0;
+        int isleaf = Tree -> isLeaf;
         node.push_back(Tree);
         while(front<=rear){
             if(isleaf==0){//非叶子结点则push
@@ -400,10 +398,11 @@ void UpdateFathers(Node<KeyType>* father,Node<KeyType>* son){//用于更新非�
 
 template<class KeyType>
 Node<KeyType>* Node_Insert(Node<KeyType>* Tree, KeyType KeyValue,int Block_Offset,int Offset_in_Block){
+    cout << KeyValue <<" "<<Block_Offset<<" "<<Offset_in_Block<<endl; 
     Node<KeyType> *temp_node=Tree;
     vector<Node<KeyType>* > PARENTS;
     PARENTS.push_back(NULL);//第一个是NULL
-    while (temp_node->isLeaf!=1){//
+    while (temp_node->isLeaf!=1){//S
         for(int i=0;i<temp_node->Info.size();i++){
             if(i==0 && KeyValue<temp_node->Info[i].KeyValue){//第一个指针
                 PARENTS.push_back(temp_node);
@@ -420,21 +419,21 @@ Node<KeyType>* Node_Insert(Node<KeyType>* Tree, KeyType KeyValue,int Block_Offse
             }
         }
     }//find the leaf
-    auto *new_Index_info=new Index_Info<KeyType>;
-    new_Index_info->KeyValue=KeyValue;
-    new_Index_info->Block_Offset=Block_Offset;
-    new_Index_info->Offset_in_Block=Offset_in_Block;
+    Index_Info<KeyType> new_Index_info;
+    new_Index_info.KeyValue=KeyValue;
+    new_Index_info.Block_Offset=Block_Offset;
+    new_Index_info.Offset_in_Block=Offset_in_Block;
 
     if(temp_node->Info.size()<temp_node->degree){//叶子结点没满可直接插入
         int i=temp_node->Info.size();//新key值的坐标
-        temp_node->Info.push_back(*new_Index_info);
+        temp_node->Info.push_back(new_Index_info);
         for(;i>0;i--){
             if(temp_node->Info[i-1].KeyValue==KeyValue){
                 return Tree;
             }else if(temp_node->Info[i-1].KeyValue<KeyValue)break;
             temp_node->Info[i]=temp_node->Info[i-1];
         }
-        temp_node->Info[i]=*new_Index_info;
+        temp_node->Info[i]=new_Index_info;
         Node<KeyType>*parent;
         parent=PARENTS.back();
         PARENTS.pop_back();
@@ -443,6 +442,9 @@ Node<KeyType>* Node_Insert(Node<KeyType>* Tree, KeyType KeyValue,int Block_Offse
             temp_node=parent;
             parent=PARENTS.back();
             PARENTS.pop_back();
+        }
+        for(int i=0;i<Tree->Info.size();i++){
+            cout << i <<":"<<Tree->Info[i].KeyValue <<" "<<Tree->Info[i].Block_Offset<<" "<<Tree->Info[i].Offset_in_Block<<endl; 
         }
 //更新父结点key值
         return Tree;
@@ -456,7 +458,7 @@ Node<KeyType>* Node_Insert(Node<KeyType>* Tree, KeyType KeyValue,int Block_Offse
             }else if(a[i-1].KeyValue<KeyValue)break;
             else a[i]=a[i-1];
         }
-        a[i]=*new_Index_info;
+        a[i]=new_Index_info;
 
         Node<KeyType>* node1 = new Node<KeyType>;
         Node<KeyType>* node2 = new Node<KeyType>;
@@ -546,14 +548,14 @@ Node<KeyType>* Node_Insert(Node<KeyType>* Tree, KeyType KeyValue,int Block_Offse
                 for(int j=0;j<half;j++){
                     node3->childs.push_back(temp_childs[j]);
                     if(j!=0){
-                        node3->Info.push_back(*new_Index_info);//实际上这里push一个任意结构体即可，因为马上会对它进行更新
+                        node3->Info.push_back(new_Index_info);//实际上这里push一个任意结构体即可，因为马上会对它进行更新
                         UpdateFathers(node3,temp_childs[j]);
                     }
                 }
                 for(int j=half;j<parent->degree+2;j++){
                     node4->childs.push_back(temp_childs[j]);
                     if(j!=half){
-                        node4->Info.push_back(*new_Index_info);//实际上这里push一个任意结构体即可，因为马上会对它进行更新
+                        node4->Info.push_back(new_Index_info);//实际上这里push一个任意结构体即可，因为马上会对它进行更新
                         UpdateFathers(node4,temp_childs[j]);
                     }
                 }

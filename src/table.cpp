@@ -63,13 +63,13 @@ short Table::gethasKey(){
     return attr_.primary_key;
 }
 
-int Table :: HasAttribute( string AttributeName ){
+bool Table :: HasAttribute( string AttributeName ){
     for ( int i = 0 ; i < attr_.num ; i ++ ){
         if( attr_.name[i] == AttributeName ){
-            return i;
+            return 1;
         }
     }
-    return -1;
+    return 0;
 }
 
 void Table :: SetTitle( string name ){

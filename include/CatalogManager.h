@@ -5,14 +5,16 @@
 #include <map>
 #include "table.h"
 #include "tuple.h"
+#include "IndexManager.h"
 using namespace std;
 class CatalogManager
 {
 private:
     map<string , Table > TABLESET;
     map<string , string> INDEXSET;// index_name to table_namef
+    IndexManager &im;
 public:
-    CatalogManager(/* args */);
+    CatalogManager(IndexManager &i);
     ~CatalogManager();
     Table& GetTable( string table_name );
     bool CreateTable( Table & t );

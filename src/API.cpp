@@ -59,8 +59,16 @@ void API::createTable( string table_name, Attribute &attribute )
 {
     if( catalog.HasTable( table_name ) ) throw table_not_exist();
     Table t( table_name , attribute );
-    t.ShowTableInfo();
     catalog.CreateTable( t );
+    if( attribute.primary_key >= 0 ){
+        int KeySize = attribute.type[attribute.primary_key] < 1 ? 4 : attribute.type[attribute.primary_key];
+        string KeyType ;
+        if( attribute.type[attribute.primary_key] == -1 ) KeyType = "int";
+        else if( attribute.type[attribute.primary_key] == 0 ) KeyType = "float";
+        else KeyType = "string";
+        indexm.Create_Index(attribute.index_name[attribute.primary_key] , KeySize , KeyType );
+    }
+    t.ShowTableInfo();
 }
 
 //ɾ�����Ͷ�ӦԪ����Ϣ
@@ -76,7 +84,7 @@ void API::createIndex(string table_name, string index_name, string attr_name)
     if (!catalog.HasTable( table_name ) ) throw table_exist();
     if ( catalog.HasIndex( index_name ) ) throw index_exist();
     Table &t = catalog.GetTable(table_name);
-    if( t.HasAttribute( attr_name ) ) throw attribute_not_exist();
+    if( !t.HasAttribute( attr_name ) ) throw attribute_not_exist();
     record.CreateIndex( t , attr_name , index_name);
     catalog.CreateIndex( index_name , table_name , attr_name );
 }

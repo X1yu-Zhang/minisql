@@ -11,11 +11,11 @@
 int main()
 {
     BufferManager bm;
-    CatalogManager cm;
     IndexManager  im( bm );
+    CatalogManager cm(im);
 
     RecordManager rm( bm ,im );
-    API api (rm ,cm );
+    API api (rm ,cm ,im);
     Interpreter interpreter( api , cm , rm, im ,bm);
     chrono::steady_clock::time_point start, end;
     cout << "********************************************************" << endl;

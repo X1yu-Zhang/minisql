@@ -522,8 +522,9 @@ void Interpreter::EXEC_CREATE_TABLE() {
                 if (attr_.name[j] == temp )
                 {
                     primary = j;
-                    attr_.index_name[j] = table_name + "_Primary.db";
+                    attr_.index_name[j] = table_name + "_Primary";
                     attr_.has_index[j] = 1;
+                    attr_.unique[j] = 1;
                     break;
                 }
             check_index += 2;
@@ -585,11 +586,13 @@ void Interpreter::EXEC_SELECT()
         {
             throw input_format_error();
         }
-
+        int the_first = 1;
         check_index += 6;
         while (1) 
         {
             tmp_target_name = getWord(check_index, check_index);
+            if( tmp_target_name.size() == 0 ) break;
+            if( !the_first && tmp_target_name != "and" ) throw input_format_error(); 
             if (!CM.HasAttribute(table_name, tmp_target_name))
             {
                 throw attribute_not_exist();
@@ -613,32 +616,26 @@ void Interpreter::EXEC_SELECT()
                 throw input_format_error();
             }
             tmp_value = getWord(check_index + 1, check_index);
-            for (int i = 0; i < tmp_attr.num; i++)
+            int flag = 1;
+            for (int i = 0; i < tmp_attr.num && flag ; i++)
             {
                 if (tmp_target_name == tmp_attr.name[i]) {
                     tmp_where.data.type = tmp_attr.type[i];
                     switch (tmp_where.data.type) {
                     case -1:
-                        if (typeid(tmp_value) == typeid(int)) {
-                            tmp_where.data.datai = stringToNum<int>(tmp_value);
-                        }
-                        else {
-                            throw data_type_conflict();
-                        }
+                        tmp_where.data.datai = stoi(tmp_value);
+                        flag = 0;
                         break;
                     case 0:
-                        if (typeid(tmp_value) == typeid(float)) {
-                            tmp_where.data.dataf = stringToNum<float>(tmp_value);
-                        }
-                        else {
-                            throw data_type_conflict();
-                        }
+                        tmp_where.data.dataf = stof(tmp_value);
+                        flag = 0;
                         break;
                     default:
                         if (!(tmp_value[0] != '\'' && tmp_value[tmp_value.length() - 1] != '\'') && !(tmp_value[0] != '"' && tmp_value[tmp_value.length() - 1] != '"')) {
                             throw input_format_error();
                         }
                         tmp_where.data.datas = tmp_value.substr(1, tmp_value.length() - 2);
+                        flag = 0;
                         break;
                     }
                 }
