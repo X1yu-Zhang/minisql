@@ -13,7 +13,8 @@
         "functional": "cpp",
         "system_error": "cpp",
         "vector": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "fstream": "cpp"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

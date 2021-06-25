@@ -31,6 +31,7 @@ int main()
             interpreter.EXEC();
             end = chrono::steady_clock::now();
             std::chrono::duration<double, std::micro> elapsed = end - start;
+            cout << ">>> SUCCESS" << endl;
             cout << "It takes : "<< (double)elapsed.count()/ 1000000 << " seconds! "<< endl;
         }
         catch (table_exist error) {

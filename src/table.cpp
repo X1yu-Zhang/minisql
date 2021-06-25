@@ -36,7 +36,6 @@ void Table :: ReadUnique(){
                 string tmp( data , length );
                 AttrUnique.insert( tmp );
             }
-            cout << AttrUnique.size() <<endl;
             file.close();
         }
     }
@@ -49,8 +48,6 @@ void Table :: WriteUnique(){
             for( unordered_set<string> :: iterator SETITOR = tmp.begin() ; SETITOR != tmp.end(); SETITOR ++ ){
                 file.write( SETITOR->data() , SETITOR->size() );
             }
-            
-            cout<<tmp.size() << endl;
             file.close();
         }
     }

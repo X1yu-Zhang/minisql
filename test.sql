@@ -3,5 +3,5 @@ create table t1(
     name char(20),
     age int,
     salary float,
-    primary key(id)
-)
+    primary key( id )
+);

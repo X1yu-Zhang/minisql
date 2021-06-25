@@ -1,0 +1,5 @@
+select * from t1;
+
+select * from t1 where id > 9000 ;
+
+quit;

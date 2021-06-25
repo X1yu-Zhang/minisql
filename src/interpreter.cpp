@@ -43,6 +43,13 @@ void Interpreter::Normalize()
                 it--;
             continue;
         }
+        if (*it == '\n')
+        {
+            query.erase(it);
+            if (it != query.begin())
+                it--;
+            continue;
+        }
         if (*it != ' ' && *it != '\t') {
             flag = 0;
             continue;
@@ -207,7 +214,7 @@ void Interpreter::EXEC_CREATE_INDEX() {
     }
     api.createIndex(table_name, index_name, attr_name);
 
-    cout << ">>> SUCCESS" << endl;
+    
 }
 // drop index
 void Interpreter::EXEC_DROP_INDEX() {
@@ -221,7 +228,7 @@ void Interpreter::EXEC_DROP_INDEX() {
         throw input_format_error();
     }
     api.dropIndex( index_name );
-    cout << ">>> SUCCESS" << endl;
+    
 }
 
 // exit
@@ -247,10 +254,11 @@ void Interpreter::EXEC_FILE() {
     stringstream ss;
     ss << fs.rdbuf();
     tmp_query = ss.str();
+    fs.close();
     check_index = 0;
     do {
         try{
-            while (tmp_query[check_index] != '\n')
+            while (tmp_query[check_index] != ';')
                 check_index++;
             query = tmp_query.substr(start_index, check_index - start_index);
             check_index++;
@@ -323,7 +331,7 @@ void Interpreter::EXEC_DELETE() {
 
     if (query[check_index + 1] == '\0') {
         api.deleteRecord(table_name, attr_name, where_delete);
-        cout << ">>> SUCCESS" << endl;
+        
         return;
     }
 
@@ -365,20 +373,10 @@ void Interpreter::EXEC_DELETE() {
                 tmp_where.data.type = tmp_attr.type[i];
                 switch (tmp_where.data.type) {
                 case -1:
-                    if (typeid(tmp_value) == typeid(int)) {
-                        tmp_where.data.datai = stringToNum<int>(tmp_value);
-                    }
-                    else {
-                        throw data_type_conflict();
-                    }
+                    tmp_where.data.datai = stringToNum<int>(tmp_value);
                     break;
                 case 0:
-                    if (typeid(tmp_value) == typeid(float)) {
-                        tmp_where.data.dataf = stringToNum<float>(tmp_value);
-                    }
-                    else {
-                        throw data_type_conflict();
-                    }
+                    tmp_where.data.dataf = stringToNum<float>(tmp_value);
                     break;
                 default:
                     if (!(tmp_value[0] != '\'' && tmp_value[tmp_value.length() - 1] != '\'') && !(tmp_value[0] != '"' && tmp_value[tmp_value.length() - 1] != '"')) {
@@ -388,23 +386,22 @@ void Interpreter::EXEC_DELETE() {
                     break;
                 }
             }
-
-            where_delete.push_back(tmp_where);
-            if (query[check_index + 1] == '\0')
-                break;
-            else if (getLower(query, check_index + 1).substr(check_index + 1, 3) == "and")
-            {
-                getWord(check_index + 1, check_index);
-                check_index++;
-            }
-            else 
-            {
-                throw input_format_error();
-            }
         }
-        api.deleteRecord(table_name, attr_name, where_delete);
-        cout << ">>> SUCCESS" << endl;
+        where_delete.push_back(tmp_where);
+        if (query[check_index + 1] == '\0')
+            break;
+        else if (getLower(query, check_index + 1).substr(check_index + 1, 3) == "and")
+        {
+            getWord(check_index + 1, check_index);
+            check_index++;
+        }
+        else 
+        {
+            throw input_format_error();
+        }
     }
+    api.deleteRecord(table_name, target_name, where_delete);
+    
 }
 
 //Insert
@@ -488,7 +485,7 @@ void Interpreter::EXEC_DELETE() {
             throw input_format_error();
         }
     api.insertRecord(table_name, tuple_insert);
-    cout << ">>> SUCCESS" << endl;
+    
 }
 
 void Interpreter::EXEC_HELP()
@@ -533,7 +530,7 @@ void Interpreter::EXEC_DROP_TABLE(){
     int check_index;
     table_name = getWord(11, check_index);
     api.dropTable(table_name);
-    cout << ">>> SUCCESS" << endl;
+    
 }
 
 void Interpreter::EXEC_CREATE_TABLE() {
@@ -562,6 +559,12 @@ void Interpreter::EXEC_CREATE_TABLE() {
                     attr_.unique[j] = 1;
                     break;
                 }
+            check_index += 2;
+        }
+        if ( check_index + 3 < query.size() && query.substr(check_index + 3, 6) == "unique")
+        {
+            getWord(check_index, check_index);
+            attr_.unique[i - 1] = 1;
             check_index += 2;
         }
     }
@@ -623,11 +626,8 @@ void Interpreter::EXEC_SELECT()
         }
         int the_first = 1;
         check_index += 6;
-        while (1) 
-        {
+        while (1) {
             tmp_target_name = getWord(check_index, check_index);
-            if( tmp_target_name.size() == 0 ) break;
-            if( !the_first && tmp_target_name != "and" ) throw input_format_error(); 
             if (!CM.HasAttribute(table_name, tmp_target_name))
             {
                 throw attribute_not_exist();
@@ -651,31 +651,37 @@ void Interpreter::EXEC_SELECT()
                 throw input_format_error();
             }
             tmp_value = getWord(check_index + 1, check_index);
-            int flag = 1;
-            for (int i = 0; i < tmp_attr.num && flag ; i++)
-            {
+            for (int i = 0; i < tmp_attr.num; i++){
                 if (tmp_target_name == tmp_attr.name[i]) {
                     tmp_where.data.type = tmp_attr.type[i];
                     switch (tmp_where.data.type) {
                     case -1:
-                        tmp_where.data.datai = stoi(tmp_value);
-                        flag = 0;
+                        tmp_where.data.datai = stringToNum<int>(tmp_value);
                         break;
                     case 0:
-                        tmp_where.data.dataf = stof(tmp_value);
-                        flag = 0;
+                        tmp_where.data.dataf = stringToNum<float>(tmp_value);
                         break;
                     default:
                         if (!(tmp_value[0] != '\'' && tmp_value[tmp_value.length() - 1] != '\'') && !(tmp_value[0] != '"' && tmp_value[tmp_value.length() - 1] != '"')) {
                             throw input_format_error();
                         }
                         tmp_where.data.datas = tmp_value.substr(1, tmp_value.length() - 2);
-                        flag = 0;
                         break;
                     }
                 }
             }
             where_select.push_back(tmp_where);
+            if (query[check_index + 1] == '\0')
+                break;
+            else if (getLower(query, check_index + 1).substr(check_index + 1, 3) == "and")
+            {
+                getWord(check_index + 1, check_index);
+                check_index++;
+            }
+            else 
+            {
+                throw input_format_error();
+            }
         }
         api.selectRecord(table_name, attr_name, target_name, where_select);
     }

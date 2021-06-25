@@ -35,7 +35,12 @@ string Data2String( Data d ){
     }
     return "";
 }
-
+int IfUsingIndex( Table & t, vector <int> AttrIndex){
+    return -1;
+    for(int i = 0 ; i < AttrIndex.size() ; i ++ ){
+        
+    }
+}
 vector<Tuple> RecordManager :: SelectWithIndex( Table &t ,File * file , string Index_name , Where where){
     vector <Tuple> ret;
     vector <Search_Info> Fetch;
@@ -151,9 +156,7 @@ vector<Tuple> RecordManager :: SelectRecord( Table &t, vector < string > &Attrib
         int index = t.AttrName2Index[AttributeName[i]];
         if( attr.has_index[index] ){
             ret = SelectWithIndex( t , file ,attr.index_name[index], where[i] );
-            AttributeName.erase(AttributeName.begin()+i);
-            where.erase(where.begin()+i);
-            no_index = false;
+            no_index = true;
             break;
         }
     }
@@ -163,7 +166,9 @@ vector<Tuple> RecordManager :: SelectRecord( Table &t, vector < string > &Attrib
             for(int i = 0 ; i + t.GetLength() < tmp->GetUsingSize() ; i += t.GetLength()+1 ){
                 if( *(data+i) == 1 ) continue;
                 Tuple tempTuple = ConverseIntoTuple( data + i + 1 , & t.attr_ );
-                ret.push_back(tempTuple);
+                if( RecordConditionFit(tempTuple, AttrIndex , where) )
+                    ret.push_back(tempTuple);
+                else continue;
             }
             if ( tmp->IsEnd() ) break;
         } 
@@ -195,14 +200,7 @@ vector<Tuple> RecordManager :: SelectRecord( Table &t ){
 int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vector<Where> where ){
     string Index_name ;
     vector <int > AttrIndex = t.ConvertIntoIndex( target_attr );
-    int SearchIndex = -1;
-    for(int i = 0 ; i < AttrIndex.size() ; i ++ ){
-        if ( t.attr_.has_index[AttrIndex[i]] ) {
-            Index_name = t.attr_.index_name[AttrIndex[i]];
-            SearchIndex = i;
-            break;
-        }
-    }
+    int SearchIndex = IfUsingIndex( t , AttrIndex) ;
     File * file = bm.GetFile( t.getTitle() , 0 ); 
     int cnt = 0;
     if( SearchIndex != -1 ){
@@ -233,6 +231,7 @@ int RecordManager :: DeleteRecord(  Table & t , vector<string> target_attr, vect
             for(int i = 0 ; i + t.GetLength() < tmp->GetUsingSize() ; i += t.GetLength()+1 ){
                 if( *(data+i) == 1 ) continue;
                 Tuple tempTuple = ConverseIntoTuple( data + i + 1 , & t.attr_ );
+                if( !RecordConditionFit( tempTuple, AttrIndex , where ) ) continue;
                 char DeletedFlag = 1;
                 tmp->write( i , &DeletedFlag , 1 );
                 DeleteUnique( t , tempTuple );

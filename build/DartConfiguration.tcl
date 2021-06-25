@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: D:/PROGRAM/cpp/db
-BuildDirectory: D:/PROGRAM/cpp/db/build
+SourceDirectory: D:/PROGRAM/cpp/db_test
+BuildDirectory: D:/PROGRAM/cpp/db_test/build
 
 # Where to place the cost data store
 CostDataFile: 
@@ -26,7 +26,7 @@ SubmitURL: http://
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "C:/Program Files/CMake/bin/cmake.exe" "D:/PROGRAM/cpp/db"
+ConfigureCommand: "C:/Program Files/CMake/bin/cmake.exe" "D:/PROGRAM/cpp/db_test"
 MakeCommand: "C:\Program Files\CMake\bin\cmake.exe" --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 
